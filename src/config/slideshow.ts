@@ -17,10 +17,10 @@ export interface SlideItem {
 }
 
 export const slideshowConfig = {
-  /** Display duration per slide in milliseconds (~7 seconds) */
+  /** Display duration per slide in milliseconds (7 seconds) */
   slideDuration: 7000,
-  /** Crossfade transition duration in milliseconds (~1.3 seconds) */
-  crossfadeDuration: 1300,
+  /** Crossfade transition duration in milliseconds (1.8 seconds) */
+  crossfadeDuration: 1800,
   slides: [
     {
       id: '01',

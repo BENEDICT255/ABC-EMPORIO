@@ -14,21 +14,33 @@
 .hero__slides {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
-.hero__slide {
-  position: absolute;
-  inset: 0;
+.hero__layer--base {
+  z-index: 1;
+  opacity: 1;
+}
+
+.hero__layer--incoming {
+  z-index: 2;
   opacity: 0;
-  transition: opacity 1.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: opacity 1.8s ease-in-out;
   will-change: opacity;
 }
 
-.hero__slide.is-active {
+.hero__layer--incoming.is-fading-in {
   opacity: 1;
-  z-index: 1;
 }
 
 .hero__media {
@@ -42,7 +54,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: var(--obj-pos-desktop, center center);
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .hero__img {
+    object-position: var(--obj-pos-mobile, center center);
+  }
 }
 
 /* Atmospheric subtle text-side gradient overlay: preserves rich photographic details and brightness on the right */
@@ -227,9 +246,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__slide {
-    transition-duration: 0.01ms !important;
-  }
   .hero__scroll-line::after {
     animation: none;
   }
