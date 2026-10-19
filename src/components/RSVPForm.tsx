@@ -102,7 +102,7 @@ export function RSVPForm() {
       {/* Full-bleed decorative dark materials artwork anchored at bottom-left matching approved Page 3 reference */}
       <div className="rsvp-backdrop" aria-hidden="true">
         <img
-          src="/assets/showtell/03_reserve_your_place_dark_materials.webp"
+          src="/assets/showtell/03_reserve_your_place_soft.webp"
           alt=""
           loading="lazy"
           decoding="async"

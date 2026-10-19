@@ -3,7 +3,7 @@
   background: #FAF5EF;
   color: var(--c-ink);
   overflow: hidden;
-  padding-block: clamp(80px, 10vh, 130px);
+  padding-block: clamp(64px, 8vh, 105px);
 }
 
 /* Dedicated decorative stone slabs & olive branch on the upper right matching approved Page 2 UI */
@@ -11,7 +11,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: clamp(380px, 52vw, 830px);
+  width: clamp(340px, 48vw, 720px);
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -32,12 +32,12 @@
 }
 
 .event-details__header {
-  max-width: 580px;
+  max-width: 520px;
   margin-bottom: 0;
 }
 
 .event-details__label {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .event-details__label-accent {
@@ -49,16 +49,17 @@
 }
 
 .event-details__heading {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   color: var(--c-charcoal);
-  font-size: clamp(2.5rem, 1.8rem + 3vw, 4.5rem);
+  font-size: var(--fs-h2);
+  line-height: 1.05;
 }
 
 .event-details__intro {
   color: #55585b;
   font-size: var(--fs-lead);
-  line-height: 1.8;
-  max-width: 580px;
+  line-height: 1.75;
+  max-width: 500px;
 }
 
 /* Horizontal Hairline Divider matching approved reference */
@@ -66,8 +67,8 @@
   width: 100%;
   height: 1px;
   background: #E8E3DD;
-  margin-top: clamp(36px, 5vw, 60px);
-  margin-bottom: clamp(32px, 4vw, 48px);
+  margin-top: clamp(28px, 4vw, 48px);
+  margin-bottom: clamp(24px, 3.5vw, 40px);
 }
 
 /* 3-Column Aligned Grid */

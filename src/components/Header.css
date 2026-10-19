@@ -82,7 +82,7 @@
 }
 
 .site-header__logo img {
-  width: 210px;
+  width: 172px;
   height: auto;
 }
 
@@ -90,10 +90,14 @@
   justify-self: end;
   display: flex;
   justify-content: flex-end;
-  min-width: 160px;
+  min-width: 150px;
 }
 
 .site-header__cta {
+  min-height: 42px;
+  padding: 0 20px;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease), transform var(--dur) var(--ease);
   will-change: opacity, transform;
 }
@@ -106,8 +110,8 @@
 }
 
 @media (max-width: 991px) {
-  .site-header__logo img { width: 176px; }
-  .site-header__cta-wrap { min-width: 140px; }
+  .site-header__logo img { width: 150px; }
+  .site-header__cta-wrap { min-width: 130px; }
 }
 
 @media (max-width: 767px) {

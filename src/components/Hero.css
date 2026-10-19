@@ -65,27 +65,27 @@
 }
 
 .hero__content {
-  max-width: 620px;
+  max-width: 530px;
   z-index: 2;
 }
 
 .hero__eyebrow {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .hero__title {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   color: var(--c-white);
   text-wrap: balance;
-  line-height: 1.02;
+  line-height: 1.05;
 }
 
 .hero__description {
-  max-width: 540px;
+  max-width: 480px;
   font-size: var(--fs-lead);
-  line-height: 1.75;
+  line-height: 1.7;
   color: #e5e5e5;
-  margin-bottom: 38px;
+  margin-bottom: 32px;
   text-wrap: pretty;
 }
 
@@ -93,13 +93,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px 28px;
+  gap: 14px 24px;
 }
 
 .hero__primary-btn {
   /* Approved rectangular white button */
-  min-height: 52px;
-  padding: 0 28px;
+  min-height: 48px;
+  padding: 0 24px;
 }
 
 .hero__secondary-link {

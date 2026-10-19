@@ -6,11 +6,11 @@ import './Closing.css';
 export function Closing({ registrationOpen = true }: { registrationOpen?: boolean }) {
   return (
     <section className="closing" id="closing" aria-labelledby="closing-heading">
-      {/* Upper Hero Section with Sculptural Materials on the right and Left-Aligned Message matching approved Page 4 reference */}
+      {/* Upper Hero Section with Sculptural Materials on the right and Centre-Left Text Group matching approved reference */}
       <div className="closing__hero">
         <div className="closing__backdrop" aria-hidden="true">
           <img
-            src="/assets/showtell/04_welcoming_closing_stone_sculpture.webp"
+            src="/assets/showtell/04_welcoming_closing_soft.webp"
             alt=""
             loading="lazy"
             decoding="async"
@@ -32,7 +32,7 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
               Experience ABC Emporio.
             </p>
 
-            {/* Primary CTA button left-aligned */}
+            {/* Primary CTA button left-aligned with text group */}
             {registrationOpen && (
               <div className="closing__action">
                 <a className="btn closing__btn" href="#rsvp">
@@ -53,8 +53,8 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
             <a href="#top" className="footer__logo-link" aria-label="Back to top">
               <img
                 src={brand.logo.light}
-                width={190}
-                height={Math.round(190 / brand.logo.aspectRatio)}
+                width={172}
+                height={Math.round(172 / brand.logo.aspectRatio)}
                 alt={brand.logo.alt}
                 className="footer__logo"
               />
@@ -71,7 +71,7 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
             <p className="footer-col__text">Next to Vodacom Head Office,</p>
             <p className="footer-col__text">Bagamoyo Rd, Dar es Salaam</p>
             <p className="footer-col__detail">Plus Code: {links.plusCode}</p>
-            <p className="footer-col__detail">Open &bull; {links.showroomHours}</p>
+            <p className="footer-col__detail">Showroom closes 5:30 pm</p>
           </div>
 
           {/* Vertical hairline divider */}
@@ -83,30 +83,30 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
             <ul className="footer__links-list">
               <li>
                 <a
-                  href={links.officialSite}
+                  href="https://abcemporio.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer__link"
                 >
-                  Official website: {links.officialSiteLabel}
+                  Official website: abcemporio.com
                 </a>
               </li>
               <li>
                 <a
-                  href={links.instagramTanzania}
+                  href="https://www.instagram.com/abcceramics_tanzania/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer__link"
                 >
-                  Instagram: {links.instagramTanzaniaHandle}
+                  Instagram: @abcceramics_tanzania
                 </a>
               </li>
               <li>
                 <a
-                  href={links.phoneTel}
+                  href="tel:+255685289679"
                   className="footer__link footer__link--phone"
                 >
-                  Phone / WhatsApp: {links.phoneDisplay}
+                  Phone / WhatsApp: +255 685 289 679
                 </a>
               </li>
             </ul>

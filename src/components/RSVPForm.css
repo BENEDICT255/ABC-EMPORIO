@@ -1,6 +1,6 @@
 .rsvp-section {
   position: relative;
-  background: #0d0e10;
+  background: #111111;
   color: var(--c-white);
   border-top: 1px solid var(--c-line-on-dark);
   overflow: hidden;
@@ -8,10 +8,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: clamp(80px, 10vh, 130px);
+  padding-block: clamp(64px, 8vh, 105px);
 }
 
-/* Full-bleed decorative dark materials artwork anchored at bottom-left matching approved Page 3 reference */
+/* Full-bleed decorative dark materials artwork anchored at left-bottom matching approved Page 3 reference */
 .rsvp-backdrop {
   position: absolute;
   inset: 0;
@@ -29,7 +29,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: left bottom;
+  object-position: -120px bottom;
   display: block;
 }
 
@@ -38,18 +38,12 @@
   inset: 0;
   background: 
     linear-gradient(90deg, 
-      rgba(13, 14, 16, 0.05) 0%, 
-      rgba(13, 14, 16, 0.2) 20%, 
-      rgba(13, 14, 16, 0.68) 42%, 
-      rgba(13, 14, 16, 0.94) 58%, 
-      #0d0e10 75%, 
-      #0d0e10 100%
-    ),
-    linear-gradient(180deg,
-      rgba(13, 14, 16, 0.45) 0%,
-      transparent 18%,
-      transparent 82%,
-      rgba(13, 14, 16, 0.45) 100%
+      transparent 0%, 
+      transparent 14%, 
+      rgba(17, 17, 17, 0.70) 26%, 
+      rgba(17, 17, 17, 0.96) 38%, 
+      #111111 50%, 
+      #111111 100%
     );
 }
 
@@ -60,19 +54,21 @@
 
 .rsvp-grid {
   display: grid;
-  grid-template-columns: 1fr 1.05fr;
-  gap: clamp(40px, 5.5vw, 90px);
+  grid-template-columns: minmax(350px, 450px) minmax(420px, 490px);
+  gap: clamp(36px, 5vw, 84px);
   align-items: center;
+  justify-content: flex-end;
+  padding-left: clamp(80px, 12vw, 190px);
 }
 
 /* Left Column: Context & Privacy */
 .rsvp-info {
-  max-width: 520px;
-  padding-left: clamp(10px, 3.5vw, 50px);
+  max-width: 450px;
+  padding-left: 0;
 }
 
 .rsvp__label {
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .rsvp__label-accent {
@@ -84,15 +80,16 @@
 }
 
 .rsvp__heading {
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   color: var(--c-white);
-  font-size: clamp(2.5rem, 1.8rem + 3vw, 4.25rem);
+  font-size: var(--fs-h2);
+  line-height: 1.08;
 }
 
 .rsvp__intro {
   color: #d1d5d8;
   margin-bottom: 0;
-  line-height: 1.8;
+  line-height: 1.75;
   font-size: var(--fs-lead);
 }
 
@@ -101,7 +98,7 @@
   width: 100%;
   height: 1px;
   background: rgba(255, 255, 255, 0.12);
-  margin-block: clamp(24px, 3vw, 36px);
+  margin-block: clamp(20px, 2.5vw, 30px);
 }
 
 .rsvp-privacy {
@@ -114,16 +111,16 @@
   font-size: var(--fs-label);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
-  color: #c0c4c8;
-  margin-bottom: 14px;
+  color: #b0b4b8;
+  margin-bottom: 12px;
   font-weight: 500;
 }
 
 .rsvp-privacy__text {
-  font-size: 0.875rem;
-  line-height: 1.7;
-  color: #a8adb2;
-  margin-bottom: 18px;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: #a0a5aa;
+  margin-bottom: 16px;
 }
 
 .rsvp-privacy__link {
@@ -138,7 +135,7 @@
 }
 
 .rsvp-privacy__link svg {
-  width: 16px;
+  width: 15px;
   height: 10px;
   transition: transform var(--dur) var(--ease);
 }
@@ -157,33 +154,33 @@
   border: none;
   padding: 0;
   box-shadow: none;
-  max-width: 540px;
+  max-width: 500px;
 }
 
 .rsvp-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .rsvp-error-banner {
-  padding: 16px 20px;
+  padding: 14px 18px;
   background: rgba(239, 107, 107, 0.12);
   border: 1px solid var(--c-accent);
   color: #ffbaba;
-  font-size: 0.875rem;
-  line-height: 1.6;
+  font-size: 0.84rem;
+  line-height: 1.5;
 }
 
 /* Form Groups */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
 }
 
 .form-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #d0d4d8;
@@ -198,7 +195,7 @@
 .form-opt {
   color: #717578;
   text-transform: lowercase;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   margin-left: 4px;
   font-weight: normal;
 }
@@ -206,10 +203,10 @@
 .form-input,
 .form-select {
   width: 100%;
-  min-height: 50px;
-  padding: 12px 18px;
-  background: #17181b;
-  border: 1px solid #282a2e;
+  min-height: 48px;
+  padding: 11px 16px;
+  background: #16171a;
+  border: 1px solid #2a2c30;
   border-radius: 0;
   color: var(--c-white);
   font-family: var(--font-body);
@@ -218,14 +215,14 @@
 }
 
 .form-input::placeholder {
-  color: #55585b;
+  color: #60646a;
 }
 
 .form-input:focus,
 .form-select:focus {
   outline: none;
   border-color: #ffffff;
-  background: #1e2023;
+  background: #1c1d20;
 }
 
 .form-input--error {
@@ -239,10 +236,10 @@
 .form-select-wrapper::after {
   content: '';
   position: absolute;
-  right: 20px;
+  right: 18px;
   top: 50%;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-right: 1.5px solid #a0a4a8;
   border-bottom: 1.5px solid #a0a4a8;
   transform: translateY(-65%) rotate(45deg);
@@ -252,32 +249,33 @@
 .form-select {
   appearance: none;
   cursor: pointer;
-  padding-right: 44px;
+  padding-right: 40px;
   color: #ffffff;
 }
 
 .form-select option {
-  background: #17181b;
+  background: #16171a;
   color: var(--c-white);
 }
 
 .form-error {
-  font-size: 0.8125rem;
+  font-size: 0.78rem;
   color: var(--c-accent);
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .rsvp-form__submit-row {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .rsvp-form__submit {
   width: 100%;
-  min-height: 52px;
+  min-height: 48px;
   background: #FAF5EF;
   color: var(--c-ink);
   font-weight: 600;
-  letter-spacing: var(--ls-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,54 +292,56 @@
 
 /* Status Screens */
 .rsvp-status {
-  padding: 40px 20px;
+  padding: 36px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .rsvp-status__icon {
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--c-success);
   color: var(--c-success);
-  font-size: 1.75rem;
-  margin-bottom: 8px;
+  font-size: 1.5rem;
+  margin-bottom: 6px;
 }
 
 .rsvp-status__title {
   color: var(--c-white);
-  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.2rem);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
 }
 
 .rsvp-status__body {
   color: var(--c-grey-light);
   font-size: var(--fs-lead);
-  max-width: 440px;
-  line-height: 1.7;
+  max-width: 420px;
+  line-height: 1.65;
 }
 
 .rsvp-status__closing {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: var(--c-white);
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .rsvp-status__btn {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 @media (max-width: 991px) {
   .rsvp-grid {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 36px;
+    padding-left: 0;
+    justify-content: stretch;
   }
 
   .rsvp-info {
@@ -349,19 +349,29 @@
     padding-left: 0;
   }
 
+  .rsvp-backdrop__img {
+    opacity: 0.22;
+    object-position: left top;
+  }
+
   .rsvp-backdrop__overlay {
     background: linear-gradient(180deg, 
-      rgba(13, 14, 16, 0.35) 0%, 
-      rgba(13, 14, 16, 0.85) 35%, 
-      #0d0e10 60%, 
-      #0d0e10 100%
+      rgba(17, 17, 17, 0.72) 0%, 
+      rgba(17, 17, 17, 0.94) 30%, 
+      #111111 55%, 
+      #111111 100%
     );
   }
 }
 
 @media (max-width: 767px) {
   .rsvp-section {
-    padding-block: 64px;
+    padding-block: 56px;
     min-height: auto;
+  }
+
+  .form-input,
+  .form-select {
+    font-size: 16px; /* Prevents iOS auto-zoom on mobile inputs */
   }
 }

@@ -26,29 +26,30 @@
   --font-display: 'Cormorant Garamond', 'Times New Roman', Times, serif;
   --font-body: 'Bai Jamjuree', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --fs-display: clamp(2.75rem, 1.4rem + 5.4vw, 6.25rem);
-  --fs-h2: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
-  --fs-h3: clamp(1.75rem, 1.4rem + 1.2vw, 2.375rem);
-  --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
-  --fs-body: 1.0625rem;
-  --fs-small: 0.9375rem;
-  --fs-label: 0.75rem;
+  /* Recalibrated scale: default 100% zoom matches the approved 80% density */
+  --fs-display: clamp(2.35rem, 1.5rem + 2.5vw, 4.15rem);
+  --fs-h2: clamp(1.9rem, 1.3rem + 1.8vw, 3.15rem);
+  --fs-h3: clamp(1.2rem, 1rem + 0.6vw, 1.6rem);
+  --fs-lead: clamp(0.9375rem, 0.875rem + 0.25vw, 1.0625rem);
+  --fs-body: 0.9375rem;
+  --fs-small: 0.8125rem;
+  --fs-label: 0.6875rem;
   --ls-label: 0.16em;
   --ls-wide: 0.32em;
 
-  /* — Layout (mirrors the official Container: 150 / 100 / 70 / 50 / 16px gutters) — */
-  --gutter: 150px;
-  --content-max: 1620px;
-  --header-h: 96px;
+  /* — Layout (scaled for elegant negative space & balanced composition) — */
+  --gutter: clamp(36px, 5vw, 88px);
+  --content-max: 1320px;
+  --header-h: 76px;
   --notice-h: 0px;
-  --section-y: clamp(5.5rem, 3rem + 8vw, 10rem);
+  --section-y: clamp(3.5rem, 2.5rem + 3.5vw, 6rem);
 
   /* — Motion — */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur: 0.5s;
 }
 
-@media (max-width: 1400px) { :root { --gutter: 100px; } }
-@media (max-width: 1200px) { :root { --gutter: 70px; } }
-@media (max-width: 991px)  { :root { --gutter: 50px; --header-h: 80px; } }
-@media (max-width: 576px)  { :root { --gutter: 20px; --header-h: 68px; } }
+@media (max-width: 1400px) { :root { --gutter: clamp(32px, 4.5vw, 72px); } }
+@media (max-width: 1200px) { :root { --gutter: clamp(28px, 4vw, 56px); } }
+@media (max-width: 991px)  { :root { --gutter: 36px; --header-h: 70px; } }
+@media (max-width: 576px)  { :root { --gutter: 20px; --header-h: 64px; } }
