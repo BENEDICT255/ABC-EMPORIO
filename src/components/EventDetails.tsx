@@ -22,10 +22,15 @@ export function EventDetails() {
 
       <div className="container event-details__container">
         <div className="event-details__header reveal">
-          <p className="label event-details__label">{d.label}</p>
+          <p className="label event-details__label">
+            <span className="event-details__label-accent">— THE DETAILS</span>
+          </p>
           <h2 id="details-heading" className="display event-details__heading">You're Invited.</h2>
           <p className="lead event-details__intro">{d.intro}</p>
         </div>
+
+        {/* Horizontal Hairline Divider matching approved reference */}
+        <div className="event-details__divider-horizontal" aria-hidden="true" />
 
         {/* 3-Column Aligned Structure: WHEN | WHERE | HOST */}
         <div className="event-details__grid reveal">
@@ -38,9 +43,6 @@ export function EventDetails() {
               </h3>
               <p className="detail-col__sub">
                 Showroom closes 5:30 pm
-              </p>
-              <p className="detail-col__pending-note">
-                (Start time to be confirmed)
               </p>
             </div>
           </div>
