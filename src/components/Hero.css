@@ -1,0 +1,236 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--c-black);
+  color: var(--c-white);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Background Slideshow Layer */
+.hero__slides {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.hero__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity;
+}
+
+.hero__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Atmospheric subtle text-side gradient overlay: preserves rich photographic details and brightness on the right */
+.hero__gradient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(8, 8, 8, 0.74) 0%, rgba(8, 8, 8, 0.42) 38%, rgba(8, 8, 8, 0.08) 68%, transparent 100%),
+    linear-gradient(180deg, rgba(8, 8, 8, 0.45) 0%, transparent 18%, transparent 82%, rgba(8, 8, 8, 0.35) 100%);
+  pointer-events: none;
+}
+
+/* Stationary Content Layout */
+.hero__inner {
+  display: flex;
+  align-items: center;
+  padding-top: calc(var(--header-h) + 24px);
+  padding-bottom: 32px;
+}
+
+.hero__content {
+  max-width: 620px;
+  z-index: 2;
+}
+
+.hero__eyebrow {
+  margin-bottom: 24px;
+}
+
+.hero__title {
+  margin-bottom: 24px;
+  color: var(--c-white);
+  text-wrap: balance;
+  line-height: 1.02;
+}
+
+.hero__description {
+  max-width: 540px;
+  font-size: var(--fs-lead);
+  line-height: 1.75;
+  color: #e5e5e5;
+  margin-bottom: 38px;
+  text-wrap: pretty;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+}
+
+.hero__primary-btn {
+  /* Approved rectangular white button */
+  min-height: 52px;
+  padding: 0 28px;
+}
+
+.hero__secondary-link {
+  color: var(--c-grey-light);
+}
+
+/* Footer / Scroll cue Bar (no slide controls) */
+.hero__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 34px;
+  z-index: 2;
+}
+
+.hero__footer-spacer {
+  flex: 1;
+}
+
+/* Official "Scroll" indicator */
+.hero__scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 44px;
+  font-size: 0.8125rem;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--c-white);
+}
+
+.hero__scroll-line {
+  position: relative;
+  width: 1px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.hero__scroll-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--c-white);
+  transform-origin: top;
+  animation: hero-scroll 2s var(--ease) infinite;
+}
+
+@keyframes hero-scroll {
+  0% { transform: scaleY(0); }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 991px) {
+  .hero__inner {
+    padding-top: calc(var(--header-h) + 16px);
+  }
+  .hero__content {
+    max-width: 540px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    min-height: 100svh;
+  }
+
+  .hero__gradient {
+    background:
+      linear-gradient(180deg, rgba(11, 11, 11, 0.8) 0%, rgba(11, 11, 11, 0.45) 30%, rgba(11, 11, 11, 0.88) 100%),
+      linear-gradient(90deg, rgba(11, 11, 11, 0.75) 0%, rgba(11, 11, 11, 0.4) 100%);
+  }
+
+  .hero__inner {
+    align-items: flex-end;
+    padding-top: calc(var(--header-h) + 20px);
+    padding-bottom: 24px;
+  }
+
+  .hero__content {
+    max-width: 100%;
+  }
+
+  .hero__eyebrow {
+    margin-bottom: 16px;
+  }
+
+  .hero__title {
+    margin-bottom: 16px;
+    font-size: clamp(2.4rem, 1.8rem + 4vw, 3.5rem);
+  }
+
+  .hero__description {
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .hero__primary-btn {
+    width: 100%;
+  }
+
+  .hero__secondary-link {
+    justify-content: center;
+  }
+
+  .hero__footer {
+    padding-bottom: 20px;
+  }
+
+  .hero__scroll {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__slide {
+    transition-duration: 0.01ms !important;
+  }
+  .hero__scroll-line::after {
+    animation: none;
+  }
+}

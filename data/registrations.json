@@ -1,0 +1,24 @@
+[
+  {
+    "id": "reg_1792361221406_zx0jlv",
+    "fullName": "David Chipperfield",
+    "profession": "Architect",
+    "professionOther": "",
+    "company": "David Chipperfield Architects",
+    "phone": "+255 791 261 881",
+    "email": "david@chipperfield.com",
+    "submissionId": "1792361221406",
+    "createdAt": "2026-10-18T22:07:01.406Z"
+  },
+  {
+    "id": "reg_1792370063341_z9164h",
+    "fullName": "Norman Foster",
+    "profession": "Architect",
+    "professionOther": "",
+    "company": "Foster + Partners",
+    "phone": "+255 788 111 222",
+    "email": "norman@fosterandpartners.com",
+    "submissionId": "1792370063341",
+    "createdAt": "2026-10-19T00:34:23.341Z"
+  }
+]

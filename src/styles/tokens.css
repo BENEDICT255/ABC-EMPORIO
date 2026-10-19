@@ -1,0 +1,54 @@
+/*
+ * ABC Emporio — Show & Tell design tokens.
+ * Colour values were extracted from the live abcemporio.com stylesheets (see docs/BRAND_AUDIT.md).
+ * Values marked "a11y" are invitation-specific adjustments made for WCAG AA contrast.
+ */
+:root {
+  /* — Verified brand colours — */
+  --c-ink: #161616;          /* Footer, menu and dark homepage sections */
+  --c-black: #0b0b0b;        /* Background tone of the official hero photography */
+  --c-charcoal: #383a3c;     /* Header text on white, "black" button background */
+  --c-grey: #717578;         /* Secondary text, rules, button borders */
+  --c-grey-light: #d3d3d3;   /* Light text on dark sections */
+  --c-line: #dddddd;         /* Header / tab borders on white */
+  --c-white: #ffffff;
+  --c-accent: #ef6b6b;       /* Section decoration labels, primary buttons, errors */
+
+  /* — Accessibility-adjusted derivatives — */
+  --c-accent-on-light: #c0403c;  /* a11y: accent text on white (5.2:1) */
+  --c-muted-on-dark: #9a9ea1;    /* a11y: secondary text on #161616 (6.7:1) */
+  --c-line-on-dark: #2e3032;     /* Hairlines on dark sections */
+  --c-success: #8fc9a3;
+
+  /* — Typography — */
+  /* Official site: Argesta / Oleragie (licensed display serifs) → substituted by Cormorant Garamond (OFL).
+     Official body font Bai Jamjuree is open-licensed and used directly. */
+  --font-display: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+  --font-body: 'Bai Jamjuree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --fs-display: clamp(2.75rem, 1.4rem + 5.4vw, 6.25rem);
+  --fs-h2: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+  --fs-h3: clamp(1.75rem, 1.4rem + 1.2vw, 2.375rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-label: 0.75rem;
+  --ls-label: 0.16em;
+  --ls-wide: 0.32em;
+
+  /* — Layout (mirrors the official Container: 150 / 100 / 70 / 50 / 16px gutters) — */
+  --gutter: 150px;
+  --content-max: 1620px;
+  --header-h: 96px;
+  --notice-h: 0px;
+  --section-y: clamp(5.5rem, 3rem + 8vw, 10rem);
+
+  /* — Motion — */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 0.5s;
+}
+
+@media (max-width: 1400px) { :root { --gutter: 100px; } }
+@media (max-width: 1200px) { :root { --gutter: 70px; } }
+@media (max-width: 991px)  { :root { --gutter: 50px; --header-h: 80px; } }
+@media (max-width: 576px)  { :root { --gutter: 20px; --header-h: 68px; } }
