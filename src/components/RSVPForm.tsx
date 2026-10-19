@@ -99,24 +99,30 @@ export function RSVPForm() {
 
   return (
     <section className="section section--dark rsvp-section" id="rsvp" aria-labelledby="rsvp-heading">
-      {/* Dedicated decorative dark materials artwork on left edge matching approved Page 3 UI */}
-      <div className="rsvp-decor-wrap" aria-hidden="true">
+      {/* Full-bleed decorative dark materials artwork anchored at bottom-left matching approved Page 3 reference */}
+      <div className="rsvp-backdrop" aria-hidden="true">
         <img
           src="/assets/showtell/03_reserve_your_place_dark_materials.webp"
           alt=""
           loading="lazy"
           decoding="async"
-          className="rsvp-decor-img"
+          className="rsvp-backdrop__img"
         />
+        <div className="rsvp-backdrop__overlay" />
       </div>
 
       <div className="container rsvp-container">
         <div className="rsvp-grid">
           {/* Left column: Context & Privacy */}
           <div className="rsvp-info reveal">
-            <p className="label rsvp__label">{rsvp.label}</p>
+            <p className="label rsvp__label">
+              <span className="rsvp__label-accent">— RSVP</span>
+            </p>
             <h2 id="rsvp-heading" className="display rsvp__heading">Reserve Your Place.</h2>
             <p className="lead rsvp__intro">{rsvp.intro}</p>
+
+            {/* Hairline divider between intro and privacy */}
+            <div className="rsvp-info__divider" aria-hidden="true" />
 
             <div className="rsvp-privacy">
               <h3 className="rsvp-privacy__title">HOW WE USE YOUR DETAILS</h3>
@@ -169,8 +175,6 @@ export function RSVPForm() {
                     autoComplete="off"
                   />
                 </div>
-
-                <p className="rsvp-form__note">Fields marked * are required.</p>
 
                 {errorMessage && (
                   <div className="rsvp-error-banner" role="alert">
@@ -289,16 +293,13 @@ export function RSVPForm() {
                     required
                     aria-required="true"
                     aria-invalid={Boolean(errors.phone)}
-                    aria-describedby={errors.phone ? 'phone-error' : 'phone-hint'}
+                    aria-describedby={errors.phone ? 'phone-error' : undefined}
                     className={`form-input ${errors.phone ? 'form-input--error' : ''}`}
                     placeholder="+255 791 261 881"
                     value={input.phone}
                     onChange={handleChange}
                     disabled={status === 'submitting'}
                   />
-                  <span id="phone-hint" className="form-hint">
-                    Please include your country code (e.g. +255 for Tanzania, +971 for UAE, +44 for UK).
-                  </span>
                   {errors.phone && (
                     <p id="phone-error" className="form-error" role="alert">{errors.phone}</p>
                   )}
