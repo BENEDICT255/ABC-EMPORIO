@@ -146,7 +146,7 @@ export function RSVPForm() {
             ) : status === 'success' ? (
               <div className="rsvp-status rsvp-status--success" role="status" aria-live="polite">
                 <div className="rsvp-status__icon" aria-hidden="true">&#10003;</div>
-                <h3 className="h3 rsvp-status__title">Thank you for registering.</h3>
+                <h3 className="h3 rsvp-status__title">Thank You for Registering.</h3>
                 <p className="rsvp-status__body">
                   Your registration for the ABC Emporio Show &amp; Tell Experience has been received.
                 </p>
@@ -167,12 +167,13 @@ export function RSVPForm() {
                   <label htmlFor="bot-field">Do not fill this field</label>
                   <input
                     id="bot-field"
-                    type="text"
+                    type="checkbox"
                     name={HONEYPOT_FIELD}
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
+                    checked={Boolean(honeypot)}
+                    onChange={(e) => setHoneypot(e.target.checked ? 'bot' : '')}
                     tabIndex={-1}
                     autoComplete="off"
+                    style={{ display: 'none' }}
                   />
                 </div>
 

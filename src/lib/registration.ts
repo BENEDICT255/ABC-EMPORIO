@@ -3,7 +3,9 @@
  */
 
 export const RSVP_FORM_NAME = 'show-and-tell-rsvp';
-export const HONEYPOT_FIELD = 'bot-field';
+export const HONEYPOT_FIELD = 'botcheck';
+export const WEB3FORMS_ACCESS_KEY = '00edc9f4-11cf-4ae3-aa71-c2b7919eb85c';
+export const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 
 export const PROFESSIONS = ['Architect', 'Engineer', 'Other'] as const;
 export type Profession = (typeof PROFESSIONS)[number] | 'Architects' | 'Engineers' | 'Others';
@@ -104,23 +106,37 @@ export async function submitRsvp(
   meta: { eventName: string; submissionId: string; honeypot: string },
 ): Promise<SubmitResult> {
   const isOther = input.profession === 'Other' || input.profession === 'Others';
-  const payload = {
-    eventName: meta.eventName,
-    fullName: safeText(input.fullName),
-    profession: input.profession,
-    professionOther: isOther ? safeText(input.professionOther) : '',
-    company: safeText(input.company),
+  const professionDisplay = isOther && input.professionOther.trim()
+    ? `Other (${safeText(input.professionOther)})`
+    : input.profession;
+
+  const payload: Record<string, string> = {
+    access_key: WEB3FORMS_ACCESS_KEY,
+    subject: 'New RSVP - ABC Emporio Show & Tell Experience',
+    from_name: 'ABC Emporio RSVP',
+    name: safeText(input.fullName),
+    profession: professionDisplay,
     phone: normalisePhone(input.phone),
-    email: input.email.trim(),
-    submissionId: meta.submissionId,
-    honeypot: meta.honeypot,
+    event: meta.eventName || 'ABC Emporio Show & Tell Experience',
   };
+
+  if (input.company.trim()) {
+    payload.company = safeText(input.company);
+  }
+
+  if (input.email.trim()) {
+    payload.email = input.email.trim();
+  }
+
+  if (meta.honeypot) {
+    payload.botcheck = meta.honeypot;
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
 
   try {
-    const res = await fetch('/api/register', {
+    const res = await fetch(WEB3FORMS_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -130,23 +146,24 @@ export async function submitRsvp(
       signal: controller.signal,
     });
 
-    if (res.ok) {
-      const data = await res.json().catch(() => ({}));
-      if (data.ok) {
-        return { ok: true };
-      }
-      return { ok: false, reason: 'provider', message: data.error };
+    const data = await res.json().catch(() => null);
+
+    if (res.ok && data && data.success === true) {
+      return { ok: true };
     }
 
-    const errorData = await res.json().catch(() => ({}));
     return {
       ok: false,
       reason: 'provider',
-      message: errorData.error || 'The registration service could not confirm your submission. Please try again.',
+      message: data?.message || "We couldn't complete your registration. Please check your connection and try again.",
     };
   } catch (err: unknown) {
-    console.warn('API submission failed, checking fallback:', err);
-    return { ok: false, reason: 'network' };
+    console.warn('Web3Forms submission failed:', err);
+    return {
+      ok: false,
+      reason: 'network',
+      message: "We couldn't complete your registration. Please check your connection and try again.",
+    };
   } finally {
     clearTimeout(timeout);
   }

@@ -85,20 +85,20 @@ export const content = {
     submitting: 'Sending…',
     closedHeading: 'Registration is now closed',
     closedBody: 'Thank you for your interest in the ABC Emporio Show & Tell Experience. Registration for this event is no longer open.',
-    successHeading: 'Thank you for registering.',
-    successBodyRequest: 'Your attendance request for the ABC Emporio Show & Tell Experience has been received.',
-    successBodyConfirmed: 'Your place at the ABC Emporio Show & Tell Experience is confirmed.',
+    successHeading: 'Thank You for Registering.',
+    successBodyRequest: 'Your registration for the ABC Emporio Show & Tell Experience has been received.',
+    successBodyConfirmed: 'Your registration for the ABC Emporio Show & Tell Experience has been received.',
     successClosing: 'We look forward to welcoming you.',
     registerAnother: 'Register another guest',
-    errorNetwork: 'We couldn’t reach the registration service. Please check your connection and try again — your details are still in the form.',
-    errorProvider: 'The registration service did not confirm your submission, so it has not been recorded. Please try again in a moment.',
+    errorNetwork: "We couldn't complete your registration. Please check your connection and try again.",
+    errorProvider: "We couldn't complete your registration. Please check your connection and try again.",
     errorDuplicate: 'These details have already been registered from this device. If you are registering a different guest, please use their own name.',
   },
 
   /** Privacy wording — requires customer approval. */
   privacy: {
     heading: 'How we use your details',
-    body: 'Your details are collected by ABC Emporio solely to manage your attendance at the Show & Tell Experience — for example, to confirm your place or share event updates. They are stored securely with our website and form provider, Netlify, and are not used for general marketing or added to any mailing list.',
+    body: 'Your details are collected by ABC Emporio solely to manage your attendance at the Show & Tell Experience — for example, to confirm your place or share event updates. They are stored securely with our website and form provider, and are not used for general marketing or added to any mailing list.',
     contactFallback: 'To update or remove your registration, please contact the person who sent you this invitation.',
   },
 
