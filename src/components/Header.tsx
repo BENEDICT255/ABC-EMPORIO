@@ -45,8 +45,8 @@ export function Header({ registrationOpen }: { registrationOpen: boolean }) {
     };
   }, []);
 
-  // CTA is hidden on Landing Hero and Closing section as explicitly requested
-  const shouldShowCta = registrationOpen && (activeSection === 'details' || activeSection === 'rsvp');
+  // CTA is shown on Event Details, RSVP, and Closing matching the approved visual references
+  const shouldShowCta = registrationOpen && (activeSection === 'details' || activeSection === 'rsvp' || activeSection === 'closing');
   const isDetails = activeSection === 'details';
 
   return (
