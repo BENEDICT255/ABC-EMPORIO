@@ -330,7 +330,9 @@ export async function sendEmail(
   text: string,
   options?: SendEmailOptions,
 ): Promise<EmailDispatchResult> {
-  const easymailApiKey = process.env.EASYMAIL_API_KEY?.trim();
+  const easymailApiKey =
+    process.env.EASYMAIL_API_KEY?.trim() ||
+    'gms_jWcZHkUbJbrHEdLMqHllrtEbNjRuhIqrWNTqTdxhfBppBPLaCXkDXReCSInyMujz';
   const easymailApiUrl =
     process.env.EASYMAIL_API_URL?.trim() || 'https://easymail-nu.vercel.app/api/v1/emails';
 
