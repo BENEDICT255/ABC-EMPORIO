@@ -1,23 +1,23 @@
 /* ==========================================================================
-   ABC EMPORIO — STREAMLINED YES/NO CALENDAR MODAL
-   Luxury architectural styling with device auto-detection
+   ABC EMPORIO — COMPACT MINI CALENDAR MODAL
+   Small, elegant luxury dialog
    ========================================================================== */
 
-.cal-modal-backdrop {
+.cal-mini-backdrop {
   position: fixed;
   inset: 0;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background: rgba(7, 8, 10, 0.84);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  animation: calModalFadeIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  padding: 16px;
+  background: rgba(7, 8, 10, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: calMiniFadeIn 0.22s ease forwards;
 }
 
-@keyframes calModalFadeIn {
+@keyframes calMiniFadeIn {
   from {
     opacity: 0;
   }
@@ -26,25 +26,26 @@
   }
 }
 
-.cal-modal-card {
+.cal-mini-card {
   position: relative;
   width: 100%;
-  max-width: 480px;
-  background: linear-gradient(180deg, #181b20 0%, #101215 100%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  max-width: 380px;
+  background: linear-gradient(180deg, #17191e 0%, #101114 100%);
+  border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 6px;
-  padding: 34px 30px 24px 30px;
+  padding: 24px 22px 16px 22px;
   box-shadow: 
-    0 32px 80px rgba(0, 0, 0, 0.88),
-    0 0 60px rgba(184, 151, 88, 0.1);
-  animation: calCardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    0 24px 60px rgba(0, 0, 0, 0.88),
+    0 0 35px rgba(184, 151, 88, 0.08);
+  animation: calMiniSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   overflow: hidden;
+  text-align: center;
 }
 
-@keyframes calCardSlideUp {
+@keyframes calMiniSlideUp {
   from {
     opacity: 0;
-    transform: translateY(18px) scale(0.98);
+    transform: translateY(14px) scale(0.97);
   }
   to {
     opacity: 1;
@@ -52,8 +53,8 @@
   }
 }
 
-/* Subtle gold accent top glow line */
-.cal-modal-accent {
+/* Gold accent top hairline */
+.cal-mini-accent {
   position: absolute;
   top: 0;
   left: 0;
@@ -62,173 +63,130 @@
   background: linear-gradient(
     90deg,
     rgba(184, 151, 88, 0) 0%,
-    rgba(184, 151, 88, 0.75) 25%,
+    rgba(184, 151, 88, 0.8) 25%,
     rgba(230, 207, 155, 1) 50%,
-    rgba(184, 151, 88, 0.75) 75%,
+    rgba(184, 151, 88, 0.8) 75%,
     rgba(184, 151, 88, 0) 100%
   );
 }
 
 /* Close button */
-.cal-modal-close {
+.cal-mini-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 34px;
-  height: 34px;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   color: #8c96a3;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.cal-modal-close:hover {
+.cal-mini-close:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: rotate(90deg);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Header */
-.cal-modal-header {
-  margin-bottom: 20px;
+.cal-mini-header {
+  margin-bottom: 6px;
 }
 
-.cal-modal-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(184, 151, 88, 0.1);
-  border: 1px solid rgba(184, 151, 88, 0.3);
-  padding: 4px 10px;
-  border-radius: 3px;
+.cal-mini-badge {
+  display: inline-block;
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #d1b172;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
-.cal-modal-badge__accent {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #b89758;
-}
-
-.cal-modal-title {
+.cal-mini-title {
   font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
-  font-size: clamp(24px, 3.2vw, 29px);
+  font-size: 22px;
   font-weight: 400;
   color: #ffffff;
   letter-spacing: 0.02em;
+  margin: 0 0 6px 0;
   line-height: 1.2;
-  margin: 0 0 10px 0;
 }
 
-.cal-modal-intro {
+.cal-mini-time {
   font-family: var(--font-body);
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: #9ba4b0;
+  font-size: 12px;
+  color: #e6cf9b;
+  font-weight: 500;
+  margin: 0 0 3px 0;
+}
+
+.cal-mini-venue {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: #838e9c;
   margin: 0;
 }
 
-/* Event Snapshot Summary */
-.cal-modal-summary {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 3px solid #b89758;
-  border-radius: 4px;
-  padding: 12px 16px;
-  margin-bottom: 22px;
-}
-
-.cal-modal-summary__row {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  line-height: 1.5;
-  padding: 3px 0;
-}
-
-.cal-modal-summary__label {
-  font-family: var(--font-body);
-  color: #828d9c;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  min-width: 55px;
-}
-
-.cal-modal-summary__value {
-  color: #e2e8f0;
-}
-
-.cal-modal-summary__value--highlight {
-  color: #e6cf9b;
-  font-weight: 600;
-}
-
-/* Streamlined Decision Row (YES / NO) */
-.cal-modal-decision-row {
+/* Direct Action Buttons */
+.cal-mini-buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 18px;
+  gap: 7px;
+  margin: 16px 0 10px 0;
 }
 
-.cal-btn-primary-yes {
+.cal-mini-btn-yes {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  padding: 15px 22px;
+  padding: 13px 18px;
   background: linear-gradient(135deg, #c5a059 0%, #b89758 100%);
   color: #0c0d10;
   font-family: var(--font-body);
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(184, 151, 88, 0.28);
-  transition: all 0.22s ease;
+  box-shadow: 0 6px 18px rgba(184, 151, 88, 0.24);
+  transition: all 0.2s ease;
 }
 
-.cal-btn-primary-yes:hover {
+.cal-mini-btn-yes:hover {
   transform: translateY(-1px);
   filter: brightness(1.06);
-  box-shadow: 0 14px 30px rgba(184, 151, 88, 0.38);
+  box-shadow: 0 8px 22px rgba(184, 151, 88, 0.32);
 }
 
-.cal-btn-primary-yes:active {
+.cal-mini-btn-yes:active {
   transform: translateY(0);
 }
 
-.cal-btn-secondary-no {
+.cal-mini-btn-no {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94a0af;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #8c97a6;
   font-family: var(--font-body);
-  font-size: 11.5px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -237,43 +195,46 @@
   transition: all 0.2s ease;
 }
 
-.cal-btn-secondary-no:hover {
-  background: rgba(255, 255, 255, 0.08);
+.cal-mini-btn-no:hover {
+  background: rgba(255, 255, 255, 0.07);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
-/* Collapsible Alternative Calendar Providers */
-.cal-modal-alt-section {
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 14px;
+/* Discreet alternative provider switcher */
+.cal-mini-alt {
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.cal-modal-alt-toggle {
+.cal-mini-alt-link {
   background: transparent;
   border: none;
-  color: #7a8694;
+  color: #6e7a89;
   font-family: var(--font-body);
-  font-size: 11.5px;
+  font-size: 10.5px;
   cursor: pointer;
   transition: color 0.2s ease;
-  padding: 4px 8px;
+  padding: 2px 6px;
 }
 
-.cal-modal-alt-toggle:hover {
+.cal-mini-alt-link:hover {
   color: #d1b172;
   text-decoration: underline;
 }
 
-.cal-modal-alt-list {
-  animation: calAltFadeIn 0.2s ease forwards;
+.cal-mini-chips {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+  animation: calChipsFadeIn 0.2s ease forwards;
 }
 
-@keyframes calAltFadeIn {
+@keyframes calChipsFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-3px);
   }
   to {
     opacity: 1;
@@ -281,56 +242,62 @@
   }
 }
 
-.cal-modal-alt-heading {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: #8c97a4;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-
-.cal-modal-alt-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.cal-alt-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+.cal-mini-chip {
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 3px;
-  color: #e2e8f0;
+  color: #d0d7e0;
   font-family: var(--font-body);
-  font-size: 11.5px;
+  font-size: 10.5px;
   cursor: pointer;
-  text-decoration: none;
   transition: all 0.2s ease;
 }
 
-.cal-alt-chip:hover {
-  background: rgba(184, 151, 88, 0.18);
-  border-color: rgba(184, 151, 88, 0.5);
-  color: #f7eed8;
-  transform: translateY(-1px);
+.cal-mini-chip:hover {
+  background: rgba(184, 151, 88, 0.15);
+  border-color: #b89758;
+  color: #ffffff;
 }
 
-@media (max-width: 520px) {
-  .cal-modal-card {
-    padding: 28px 18px 20px 18px;
-  }
+/* Success feedback inline */
+.cal-mini-feedback {
+  padding: 16px 8px;
+  animation: calFeedbackFade 0.2s ease forwards;
+}
 
-  .cal-modal-summary__row {
-    flex-direction: column;
-    gap: 2px;
+@keyframes calFeedbackFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
   }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-  .cal-modal-summary__label {
-    min-width: unset;
-  }
+.cal-mini-feedback__badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: #d1b172;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.cal-mini-feedback__title {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: 24px;
+  font-weight: 400;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+
+.cal-mini-feedback__text {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #9ba6b4;
+  margin: 0;
 }

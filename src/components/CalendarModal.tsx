@@ -20,10 +20,10 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   isOpen,
   onClose,
   attendanceDate,
-  guestName,
 }) => {
   const [platform, setPlatform] = useState<PlatformType>('other');
-  const [showAllOptions, setShowAllOptions] = useState(false);
+  const [showAltOptions, setShowAltOptions] = useState(false);
+  const [isSuccessFeedback, setIsSuccessFeedback] = useState(false);
 
   useEffect(() => {
     setPlatform(detectUserPlatform());
@@ -47,7 +47,8 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
       window.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = '';
-      setShowAllOptions(false);
+      setShowAltOptions(false);
+      setIsSuccessFeedback(false);
     }
     return () => {
       document.body.style.overflow = '';
@@ -60,164 +61,147 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   const googleUrl = generateGoogleCalendarUrl(attendanceDate);
   const outlookUrl = generateOutlookCalendarUrl(attendanceDate);
 
-  const handleAppleClick = () => {
+  const triggerApple = () => {
     downloadIcsFile(attendanceDate);
-    onClose();
+    confirmAndClose();
   };
 
-  const handleGoogleClick = () => {
+  const triggerGoogle = () => {
     window.open(googleUrl, '_blank', 'noopener,noreferrer');
-    onClose();
+    confirmAndClose();
   };
 
-  // Primary action based on detected device
+  const triggerOutlook = () => {
+    window.open(outlookUrl, '_blank', 'noopener,noreferrer');
+    confirmAndClose();
+  };
+
+  const confirmAndClose = () => {
+    setIsSuccessFeedback(true);
+    setTimeout(() => {
+      onClose();
+    }, 1200);
+  };
+
   const handlePrimaryYes = () => {
     if (platform === 'apple') {
-      handleAppleClick();
+      triggerApple();
     } else {
-      handleGoogleClick();
+      triggerGoogle();
     }
   };
 
-  // Button title and icon tailored to their detected platform
   const primaryLabel =
     platform === 'apple'
-      ? 'YES, ADD TO APPLE CALENDAR'
+      ? 'YES, ADD TO CALENDAR'
       : platform === 'android'
-      ? 'YES, ADD TO GOOGLE CALENDAR'
+      ? 'YES, ADD TO CALENDAR'
       : 'YES, ADD TO CALENDAR';
 
   return (
     <div
-      className="cal-modal-backdrop"
+      className="cal-mini-backdrop"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="cal-modal-title"
+      aria-labelledby="cal-mini-title"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="cal-modal-card">
-        {/* Luxury gold accent line on top */}
-        <div className="cal-modal-accent" aria-hidden="true" />
+      <div className="cal-mini-card">
+        {/* Subtle gold accent top bar */}
+        <div className="cal-mini-accent" aria-hidden="true" />
 
         {/* Close Button */}
         <button
           type="button"
-          className="cal-modal-close"
+          className="cal-mini-close"
           onClick={onClose}
-          aria-label="Close calendar window"
+          aria-label="Close"
         >
           &times;
         </button>
 
-        {/* Header */}
-        <div className="cal-modal-header">
-          <div className="cal-modal-badge">
-            <span className="cal-modal-badge__accent" aria-hidden="true" />
-            <span>CALENDAR REMINDER</span>
+        {isSuccessFeedback ? (
+          <div className="cal-mini-feedback">
+            <div className="cal-mini-feedback__badge">CALENDAR INVITE SET</div>
+            <h4 className="cal-mini-feedback__title">Date Saved</h4>
+            <p className="cal-mini-feedback__text">
+              We look forward to welcoming you to the showroom on {event.dateFormatted}.
+            </p>
           </div>
-
-          <h3 id="cal-modal-title" className="cal-modal-title">
-            Add to Your Calendar?
-          </h3>
-
-          <p className="cal-modal-intro">
-            {guestName ? `Dear ${guestName}, ` : ''}would you like to add The Show &amp; Tell Experience to your calendar so you have directions, showroom hours, and your reservation ready?
-          </p>
-        </div>
-
-        {/* Event Snapshot */}
-        <div className="cal-modal-summary">
-          <div className="cal-modal-summary__row">
-            <span className="cal-modal-summary__label">DATE:</span>
-            <span className="cal-modal-summary__value cal-modal-summary__value--highlight">
-              {event.dateFormatted}
-            </span>
-          </div>
-          <div className="cal-modal-summary__row">
-            <span className="cal-modal-summary__label">TIME:</span>
-            <span className="cal-modal-summary__value">10:00 AM – 5:00 PM EAT</span>
-          </div>
-          <div className="cal-modal-summary__row">
-            <span className="cal-modal-summary__label">VENUE:</span>
-            <span className="cal-modal-summary__value">
-              ABC Emporio Showroom, Bagamoyo Rd (Next to Vodacom Head Office)
-            </span>
-          </div>
-        </div>
-
-        {/* Streamlined YES / NO Action Buttons */}
-        <div className="cal-modal-decision-row">
-          <button
-            type="button"
-            className="cal-btn-primary-yes"
-            onClick={handlePrimaryYes}
-            autoFocus
-          >
-            {platform === 'apple' ? (
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.82 1.11-1.96.99-3.1-.96.04-2.18.66-2.87 1.48-.61.71-1.14 1.88-1 2.99 1.07.08 2.22-.55 2.88-1.37z" />
-              </svg>
-            ) : (
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            )}
-            <span>{primaryLabel}</span>
-          </button>
-
-          <button
-            type="button"
-            className="cal-btn-secondary-no"
-            onClick={onClose}
-          >
-            NOT NOW
-          </button>
-        </div>
-
-        {/* Collapsible Alternative Calendar Providers */}
-        <div className="cal-modal-alt-section">
-          {!showAllOptions ? (
-            <button
-              type="button"
-              className="cal-modal-alt-toggle"
-              onClick={() => setShowAllOptions(true)}
-            >
-              <span>Using a different calendar? Choose provider &darr;</span>
-            </button>
-          ) : (
-            <div className="cal-modal-alt-list">
-              <span className="cal-modal-alt-heading">SELECT YOUR CALENDAR:</span>
-              <div className="cal-modal-alt-buttons">
-                <button
-                  type="button"
-                  className="cal-alt-chip"
-                  onClick={handleGoogleClick}
-                >
-                  <span>Google Calendar</span>
-                </button>
-                <button
-                  type="button"
-                  className="cal-alt-chip"
-                  onClick={handleAppleClick}
-                >
-                  <span>Apple / iCal</span>
-                </button>
-                <a
-                  href={outlookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cal-alt-chip"
-                  onClick={onClose}
-                >
-                  <span>Outlook / 365</span>
-                </a>
-              </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="cal-mini-header">
+              <span className="cal-mini-badge">CALENDAR REMINDER</span>
+              <h3 id="cal-mini-title" className="cal-mini-title">
+                Add to Your Calendar?
+              </h3>
+              <p className="cal-mini-time">
+                {event.dateFormatted} &bull; 10:00 AM – 5:00 PM
+              </p>
+              <p className="cal-mini-venue">
+                ABC Emporio Showroom, Bagamoyo Rd
+              </p>
             </div>
-          )}
-        </div>
+
+            {/* Direct YES / NO Action Buttons */}
+            <div className="cal-mini-buttons">
+              <button
+                type="button"
+                className="cal-mini-btn-yes"
+                onClick={handlePrimaryYes}
+                autoFocus
+              >
+                {platform === 'apple' ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.82 1.11-1.96.99-3.1-.96.04-2.18.66-2.87 1.48-.61.71-1.14 1.88-1 2.99 1.07.08 2.22-.55 2.88-1.37z" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                    <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                )}
+                <span>{primaryLabel}</span>
+              </button>
+
+              <button
+                type="button"
+                className="cal-mini-btn-no"
+                onClick={onClose}
+              >
+                NOT NOW
+              </button>
+            </div>
+
+            {/* Discreet alternative selector */}
+            <div className="cal-mini-alt">
+              {!showAltOptions ? (
+                <button
+                  type="button"
+                  className="cal-mini-alt-link"
+                  onClick={() => setShowAltOptions(true)}
+                >
+                  Choose provider (Google / Apple / Outlook)
+                </button>
+              ) : (
+                <div className="cal-mini-chips">
+                  <button type="button" className="cal-mini-chip" onClick={triggerGoogle}>
+                    Google
+                  </button>
+                  <button type="button" className="cal-mini-chip" onClick={triggerApple}>
+                    Apple / iCal
+                  </button>
+                  <button type="button" className="cal-mini-chip" onClick={triggerOutlook}>
+                    Outlook
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
