@@ -405,12 +405,7 @@
 
 .rsvp-status--success {
   text-align: center;
-}
-
-.rsvp-status__icon {
-  font-size: 28px;
-  color: #10b981;
-  margin-bottom: 16px;
+  padding-top: 40px;
 }
 
 .rsvp-status__title {

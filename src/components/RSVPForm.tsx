@@ -159,7 +159,6 @@ export function RSVPForm() {
               </div>
             ) : status === 'success' ? (
               <div className="rsvp-status rsvp-status--success" role="status" aria-live="polite">
-                <div className="rsvp-status__icon" aria-hidden="true">&#10003;</div>
                 <h3 className="h3 rsvp-status__title">Thank You for Registering.</h3>
                 <p className="rsvp-status__body">
                   Your registration for the ABC Emporio Show &amp; Tell Experience has been received.

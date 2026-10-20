@@ -1,9 +1,11 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import {
   generateGoogleCalendarUrl,
   generateOutlookCalendarUrl,
   downloadIcsFile,
   getCalendarEventDetails,
+  detectUserPlatform,
+  type PlatformType,
 } from '../lib/calendar';
 import './CalendarModal.css';
 
@@ -20,7 +22,14 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   attendanceDate,
   guestName,
 }) => {
-  const event = getCalendarEventDetails(attendanceDate);
+  const [platform, setPlatform] = useState<PlatformType>('other');
+  const [showAllOptions, setShowAllOptions] = useState(false);
+
+  useEffect(() => {
+    setPlatform(detectUserPlatform());
+  }, []);
+
+  const event = useMemo(() => getCalendarEventDetails(attendanceDate), [attendanceDate]);
 
   // Close on Escape key
   const handleKeyDown = useCallback(
@@ -38,6 +47,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
       window.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = '';
+      setShowAllOptions(false);
     }
     return () => {
       document.body.style.overflow = '';
@@ -52,7 +62,30 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
 
   const handleAppleClick = () => {
     downloadIcsFile(attendanceDate);
+    onClose();
   };
+
+  const handleGoogleClick = () => {
+    window.open(googleUrl, '_blank', 'noopener,noreferrer');
+    onClose();
+  };
+
+  // Primary action based on detected device
+  const handlePrimaryYes = () => {
+    if (platform === 'apple') {
+      handleAppleClick();
+    } else {
+      handleGoogleClick();
+    }
+  };
+
+  // Button title and icon tailored to their detected platform
+  const primaryLabel =
+    platform === 'apple'
+      ? 'YES, ADD TO APPLE CALENDAR'
+      : platform === 'android'
+      ? 'YES, ADD TO GOOGLE CALENDAR'
+      : 'YES, ADD TO CALENDAR';
 
   return (
     <div
@@ -65,7 +98,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
       }}
     >
       <div className="cal-modal-card">
-        {/* Subtle gold accent top border */}
+        {/* Luxury gold accent line on top */}
         <div className="cal-modal-accent" aria-hidden="true" />
 
         {/* Close Button */}
@@ -73,7 +106,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
           type="button"
           className="cal-modal-close"
           onClick={onClose}
-          aria-label="Close calendar reminder window"
+          aria-label="Close calendar window"
         >
           &times;
         </button>
@@ -81,20 +114,20 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
         {/* Header */}
         <div className="cal-modal-header">
           <div className="cal-modal-badge">
-            <span className="cal-modal-badge__dot" aria-hidden="true" />
-            <span>CONFIRMED RESERVATION</span>
+            <span className="cal-modal-badge__accent" aria-hidden="true" />
+            <span>CALENDAR REMINDER</span>
           </div>
 
           <h3 id="cal-modal-title" className="cal-modal-title">
-            Save to Your Calendar
+            Add to Your Calendar?
           </h3>
 
           <p className="cal-modal-intro">
-            {guestName ? `Dear ${guestName}, ` : ''}add The Show &amp; Tell Experience to your calendar so you have the schedule, directions, and showroom concierge handy.
+            {guestName ? `Dear ${guestName}, ` : ''}would you like to add The Show &amp; Tell Experience to your calendar so you have directions, showroom hours, and your reservation ready?
           </p>
         </div>
 
-        {/* Event Snapshot Card */}
+        {/* Event Snapshot */}
         <div className="cal-modal-summary">
           <div className="cal-modal-summary__row">
             <span className="cal-modal-summary__label">DATE:</span>
@@ -114,84 +147,76 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
           </div>
         </div>
 
-        {/* Calendar Action Buttons */}
-        <div className="cal-modal-actions">
-          {/* Google Calendar */}
-          <a
-            href={googleUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cal-btn cal-btn--google"
-            onClick={onClose}
-          >
-            <span className="cal-btn__icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="4" width="18" height="18" rx="3" stroke="#b89758" strokeWidth="1.8" />
-                <path d="M16 2v4M8 2v4M3 10h18" stroke="#b89758" strokeWidth="1.8" strokeLinecap="round" />
-                <circle cx="8" cy="15" r="1.5" fill="#ffffff" />
-                <circle cx="12" cy="15" r="1.5" fill="#ffffff" />
-                <circle cx="16" cy="15" r="1.5" fill="#ffffff" />
-              </svg>
-            </span>
-            <div className="cal-btn__text">
-              <span className="cal-btn__title">Google Calendar</span>
-              <span className="cal-btn__desc">Web &amp; Android devices</span>
-            </div>
-            <span className="cal-btn__arrow" aria-hidden="true">&rarr;</span>
-          </a>
-
-          {/* Apple Calendar */}
+        {/* Streamlined YES / NO Action Buttons */}
+        <div className="cal-modal-decision-row">
           <button
             type="button"
-            className="cal-btn cal-btn--apple"
-            onClick={() => {
-              handleAppleClick();
-              onClose();
-            }}
+            className="cal-btn-primary-yes"
+            onClick={handlePrimaryYes}
+            autoFocus
           >
-            <span className="cal-btn__icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.82 1.11-1.96.99-3.1-.96.04-2.18.66-2.87 1.48-.61.71-1.14 1.88-1 2.99 1.07.08 2.22-.55 2.88-1.37z"/>
+            {platform === 'apple' ? (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.82 1.11-1.96.99-3.1-.96.04-2.18.66-2.87 1.48-.61.71-1.14 1.88-1 2.99 1.07.08 2.22-.55 2.88-1.37z" />
               </svg>
-            </span>
-            <div className="cal-btn__text">
-              <span className="cal-btn__title">Apple Calendar</span>
-              <span className="cal-btn__desc">iPhone, iPad &amp; Mac</span>
-            </div>
-            <span className="cal-btn__arrow" aria-hidden="true">&rarr;</span>
+            ) : (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            )}
+            <span>{primaryLabel}</span>
           </button>
 
-          {/* Outlook / Office 365 */}
-          <a
-            href={outlookUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cal-btn cal-btn--outlook"
+          <button
+            type="button"
+            className="cal-btn-secondary-no"
             onClick={onClose}
           >
-            <span className="cal-btn__icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#60a5fa" strokeWidth="1.8" />
-                <path d="M3 9h18M9 21V9" stroke="#60a5fa" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </span>
-            <div className="cal-btn__text">
-              <span className="cal-btn__title">Outlook / Office 365</span>
-              <span className="cal-btn__desc">Desktop &amp; Outlook Web</span>
-            </div>
-            <span className="cal-btn__arrow" aria-hidden="true">&rarr;</span>
-          </a>
+            NOT NOW
+          </button>
         </div>
 
-        {/* Footer dismissal */}
-        <div className="cal-modal-footer">
-          <button
-            type="button"
-            className="cal-modal-dismiss-btn"
-            onClick={onClose}
-          >
-            Done &bull; View Registration Summary
-          </button>
+        {/* Collapsible Alternative Calendar Providers */}
+        <div className="cal-modal-alt-section">
+          {!showAllOptions ? (
+            <button
+              type="button"
+              className="cal-modal-alt-toggle"
+              onClick={() => setShowAllOptions(true)}
+            >
+              <span>Using a different calendar? Choose provider &darr;</span>
+            </button>
+          ) : (
+            <div className="cal-modal-alt-list">
+              <span className="cal-modal-alt-heading">SELECT YOUR CALENDAR:</span>
+              <div className="cal-modal-alt-buttons">
+                <button
+                  type="button"
+                  className="cal-alt-chip"
+                  onClick={handleGoogleClick}
+                >
+                  <span>Google Calendar</span>
+                </button>
+                <button
+                  type="button"
+                  className="cal-alt-chip"
+                  onClick={handleAppleClick}
+                >
+                  <span>Apple / iCal</span>
+                </button>
+                <a
+                  href={outlookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cal-alt-chip"
+                  onClick={onClose}
+                >
+                  <span>Outlook / 365</span>
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

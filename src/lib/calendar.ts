@@ -15,6 +15,37 @@ export interface CalendarEventDetails {
   dateFormatted: string;
 }
 
+export type PlatformType = 'apple' | 'android' | 'windows' | 'other';
+
+export function detectUserPlatform(): PlatformType {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return 'other';
+  }
+
+  const ua = navigator.userAgent || navigator.vendor || '';
+
+  // Apple ecosystem (iPhone, iPad, iPod, Mac)
+  if (
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+    /Macintosh|Mac OS X/i.test(ua)
+  ) {
+    return 'apple';
+  }
+
+  // Android
+  if (/android/i.test(ua)) {
+    return 'android';
+  }
+
+  // Windows
+  if (/Windows/i.test(ua)) {
+    return 'windows';
+  }
+
+  return 'other';
+}
+
 export function getCalendarEventDetails(attendanceDate: string): CalendarEventDetails {
   const isDay2 = attendanceDate.includes('3 November') || attendanceDate.includes('Tuesday');
   
