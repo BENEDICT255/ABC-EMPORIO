@@ -112,7 +112,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             email,
             attendanceDate: dateSelected,
           });
-          await sendEmail(email, emailData.subject, emailData.html, emailData.text);
+          await sendEmail(email, emailData.subject, emailData.html, emailData.text, {
+            idempotencyKey: `reminder_3days_${record.id}_${primaryDate}`,
+            replyTo: 'info@abctanzania.com',
+          });
           record.reminder_3days_sent = true;
 
           if (dbUrl) {
@@ -133,7 +136,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             email,
             attendanceDate: dateSelected,
           });
-          await sendEmail(email, emailData.subject, emailData.html, emailData.text);
+          await sendEmail(email, emailData.subject, emailData.html, emailData.text, {
+            idempotencyKey: `reminder_1day_${record.id}_${primaryDate}`,
+            replyTo: 'info@abctanzania.com',
+          });
           record.reminder_1day_sent = true;
 
           if (dbUrl) {
@@ -154,7 +160,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             email,
             attendanceDate: dateSelected,
           });
-          await sendEmail(email, emailData.subject, emailData.html, emailData.text);
+          await sendEmail(email, emailData.subject, emailData.html, emailData.text, {
+            idempotencyKey: `reminder_dayof_${record.id}_${primaryDate}`,
+            replyTo: 'info@abctanzania.com',
+          });
           record.reminder_dayof_sent = true;
 
           if (dbUrl) {

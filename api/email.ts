@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import nodemailer from 'nodemailer';
 
 export interface EmailRecipient {
   name: string;
@@ -9,10 +8,19 @@ export interface EmailRecipient {
   phone?: string;
 }
 
+export interface SendEmailOptions {
+  idempotencyKey?: string;
+  replyTo?: string;
+  cc?: string[];
+  bcc?: string[];
+}
+
 export interface EmailDispatchResult {
   ok: boolean;
-  provider: 'resend' | 'smtp' | 'log_fallback';
+  provider: 'easymail' | 'log_fallback';
+  statusCode?: number;
   messageId?: string;
+  idempotentReplay?: boolean;
   simulated?: boolean;
   error?: string;
 }
@@ -314,77 +322,98 @@ CONCIERGE PHONE: ${CONCIERGE_PHONE}
   };
 }
 
-/** Generic Email Dispatcher supporting Resend API, SMTP, or local JSON logging fallback */
+/** EasyMail REST API Email Dispatcher */
 export async function sendEmail(
   to: string,
   subject: string,
   html: string,
   text: string,
+  options?: SendEmailOptions,
 ): Promise<EmailDispatchResult> {
-  const from = process.env.EMAIL_FROM || 'ABC Emporio <rsvp@abcemporio.com>';
+  const easymailApiKey = process.env.EASYMAIL_API_KEY?.trim();
+  const easymailApiUrl =
+    process.env.EASYMAIL_API_URL?.trim() || 'https://easymail-nu.vercel.app/api/v1/emails';
 
-  // 1. Try Resend if RESEND_API_KEY is configured
-  if (process.env.RESEND_API_KEY) {
+  // 1. Primary: EasyMail REST API Dispatch
+  if (easymailApiKey) {
     try {
-      const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from,
-          to: [to],
-          subject,
-          html,
-          text,
-        }),
-      });
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${easymailApiKey}`,
+        'Content-Type': 'application/json',
+      };
 
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data?.id) {
-        return { ok: true, provider: 'resend', messageId: data.id };
+      if (options?.idempotencyKey) {
+        headers['Idempotency-Key'] = options.idempotencyKey;
       }
-      console.warn('Resend returned non-200:', data);
-    } catch (err) {
-      console.warn('Resend dispatch error:', err);
-    }
-  }
 
-  // 2. Try SMTP / Gmail Nodemailer if credentials are provided
-  const smtpUser = process.env.SMTP_USER || process.env.GMAIL_USER || 'benedictbisama@gmail.com';
-  const smtpPass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASSWORD;
-  const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 465;
-
-  if (smtpPass) {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
-
-      const info = await transporter.sendMail({
-        from: process.env.EMAIL_FROM || `"ABC Emporio RSVP" <${smtpUser}>`,
+      // Payload conforms to EasyMail specification:
+      // The sending identity is automatically determined by the EasyMail sender (ABC Emporio Events)
+      const payload: Record<string, unknown> = {
         to,
         subject,
         html,
         text,
+      };
+
+      if (options?.replyTo) {
+        payload.replyTo = options.replyTo;
+      }
+      if (options?.cc && options.cc.length > 0) {
+        payload.cc = options.cc;
+      }
+      if (options?.bcc && options.bcc.length > 0) {
+        payload.bcc = options.bcc;
+      }
+
+      const res = await fetch(easymailApiUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
       });
 
-      console.log(`[SMTP EMAIL SENT] Message ID: ${info.messageId} to ${to}`);
-      return { ok: true, provider: 'smtp', messageId: info.messageId };
-    } catch (smtpErr: any) {
-      console.warn('SMTP dispatch error:', smtpErr?.message || smtpErr);
+      const data = await res.json().catch(() => ({}));
+
+      // 201 Created = new delivery accepted
+      // 200 OK = idempotent replay
+      if (res.status === 201 || res.status === 200) {
+        const isReplay = res.status === 200;
+        const messageId = (data?.id || data?.messageId || data?.data?.id || 'accepted') as string;
+        console.log(
+          `[EASYMAIL SUCCESS] Status: ${res.status} | To: ${to} | Idempotent: ${isReplay} | Message ID: ${messageId}`
+        );
+        return {
+          ok: true,
+          provider: 'easymail',
+          statusCode: res.status,
+          messageId,
+          idempotentReplay: isReplay,
+        };
+      }
+
+      const errMsg =
+        data?.error?.message ||
+        data?.message ||
+        (typeof data?.error === 'string' ? data.error : null) ||
+        `EasyMail rejected request with HTTP status ${res.status}`;
+      console.warn(`[EASYMAIL REJECTED] Status: ${res.status} | Error: ${errMsg}`);
+      return {
+        ok: false,
+        provider: 'easymail',
+        statusCode: res.status,
+        error: errMsg,
+      };
+    } catch (err: unknown) {
+      const networkErr = err instanceof Error ? err.message : String(err);
+      console.warn('[EASYMAIL NETWORK FAILURE]', networkErr);
+      return {
+        ok: false,
+        provider: 'easymail',
+        error: `Network failure connecting to EasyMail: ${networkErr}`,
+      };
     }
   }
 
-  // 3. Fallback: Log to data/email_logs.json for local verification & audit tracking
+  // 2. Local fallback logging if EASYMAIL_API_KEY is not configured
   try {
     const dataDir = path.join(process.cwd(), 'data');
     if (!fs.existsSync(dataDir)) {
@@ -395,14 +424,15 @@ export async function sendEmail(
     const logEntry = {
       id: `email_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
       to,
-      from,
       subject,
+      idempotencyKey: options?.idempotencyKey,
       timestamp: new Date().toISOString(),
-      simulated: !process.env.RESEND_API_KEY && !smtpPass,
+      provider: 'easymail_simulated',
+      note: 'EASYMAIL_API_KEY environment variable not configured. Email logged to local audit file.',
     };
     existing.push(logEntry);
     fs.writeFileSync(logFile, JSON.stringify(existing, null, 2), 'utf-8');
-    console.log(`[EMAIL DISPATCHED] To: ${to} | Subject: "${subject}" | Mode: ${process.env.RESEND_API_KEY || smtpPass ? 'LIVE' : 'SIMULATED'}`);
+    console.log(`[EMAIL LOGGED LOCALLY] To: ${to} | Subject: "${subject}" | (Waiting for EASYMAIL_API_KEY)`);
   } catch (err) {
     console.warn('Failed to write email log fallback:', err);
   }

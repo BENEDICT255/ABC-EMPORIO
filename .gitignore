@@ -6,6 +6,7 @@ dist
 .DS_Store
 .env
 .env.*
+!.env.example
 scratch/
 screenshot*.png
 data/email_logs.json

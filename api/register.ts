@@ -160,7 +160,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         attendanceDate,
         phone: cleanPhone,
       });
-      await sendEmail(email, emailContent.subject, emailContent.html, emailContent.text);
+      const idempotencyKey = `rsvp_confirm_${submissionId || recordId}`;
+      await sendEmail(email, emailContent.subject, emailContent.html, emailContent.text, {
+        idempotencyKey,
+        replyTo: 'info@abctanzania.com',
+      });
     } catch (mailErr) {
       console.warn('Confirmation email dispatch warning:', mailErr);
     }
