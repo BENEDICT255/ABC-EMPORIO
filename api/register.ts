@@ -3,6 +3,7 @@ import { neon } from '@neondatabase/serverless';
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildConfirmationEmail, sendEmail } from './email';
+import { getSupabase } from './supabase';
 
 interface RsvpPayload {
   fullName: string;
@@ -103,51 +104,95 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       createdAt,
     };
 
-    // 3. Neon Postgres Database Persistence
+    // 3. Database Persistence (Supabase primary, Neon Postgres secondary, local fallback)
+    let persisted = false;
+
+    // 3a. Supabase persistence
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { error: sbError } = await supabase.from('registrations').upsert(
+          {
+            id: recordId,
+            full_name: fullName,
+            attendance_date: attendanceDate,
+            profession,
+            profession_other: professionOther,
+            company,
+            phone: cleanPhone,
+            email,
+            event_key: eventKey,
+            submission_id: submissionId,
+            confirmation_sent: true,
+            reminder_3days_sent: false,
+            reminder_1day_sent: false,
+            reminder_dayof_sent: false,
+          },
+          { onConflict: 'submission_id' }
+        );
+
+        if (!sbError) {
+          persisted = true;
+        } else {
+          console.warn('Supabase persistence notice:', sbError.message);
+        }
+      } catch (sbEx) {
+        console.warn('Supabase persistence exception:', sbEx);
+      }
+    }
+
+    // 3b. Neon Postgres Database Persistence (if configured)
     const dbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
     if (dbUrl) {
-      const sql = neon(dbUrl);
+      try {
+        const sql = neon(dbUrl);
 
-      // Initialize table and add columns if they don't already exist
-      await sql`
-        CREATE TABLE IF NOT EXISTS registrations (
-          id VARCHAR(64) PRIMARY KEY,
-          full_name VARCHAR(120) NOT NULL,
-          attendance_date VARCHAR(80),
-          profession VARCHAR(80) NOT NULL,
-          profession_other VARCHAR(100),
-          company VARCHAR(150),
-          phone VARCHAR(30) NOT NULL,
-          email VARCHAR(255),
-          event_key VARCHAR(100) NOT NULL,
-          submission_id VARCHAR(64) UNIQUE,
-          confirmation_sent BOOLEAN DEFAULT FALSE,
-          reminder_3days_sent BOOLEAN DEFAULT FALSE,
-          reminder_1day_sent BOOLEAN DEFAULT FALSE,
-          reminder_dayof_sent BOOLEAN DEFAULT FALSE,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-        );
-      `;
+        // Initialize table and add columns if they don't already exist
+        await sql`
+          CREATE TABLE IF NOT EXISTS registrations (
+            id VARCHAR(64) PRIMARY KEY,
+            full_name VARCHAR(120) NOT NULL,
+            attendance_date VARCHAR(80),
+            profession VARCHAR(80) NOT NULL,
+            profession_other VARCHAR(100),
+            company VARCHAR(150),
+            phone VARCHAR(30) NOT NULL,
+            email VARCHAR(255),
+            event_key VARCHAR(100) NOT NULL,
+            submission_id VARCHAR(64) UNIQUE,
+            confirmation_sent BOOLEAN DEFAULT FALSE,
+            reminder_3days_sent BOOLEAN DEFAULT FALSE,
+            reminder_1day_sent BOOLEAN DEFAULT FALSE,
+            reminder_dayof_sent BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+        `;
 
-      await sql`
-        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS attendance_date VARCHAR(80);
-        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS confirmation_sent BOOLEAN DEFAULT FALSE;
-        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_3days_sent BOOLEAN DEFAULT FALSE;
-        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_1day_sent BOOLEAN DEFAULT FALSE;
-        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_dayof_sent BOOLEAN DEFAULT FALSE;
-      `;
+        await sql`
+          ALTER TABLE registrations ADD COLUMN IF NOT EXISTS attendance_date VARCHAR(80);
+          ALTER TABLE registrations ADD COLUMN IF NOT EXISTS confirmation_sent BOOLEAN DEFAULT FALSE;
+          ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_3days_sent BOOLEAN DEFAULT FALSE;
+          ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_1day_sent BOOLEAN DEFAULT FALSE;
+          ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_dayof_sent BOOLEAN DEFAULT FALSE;
+        `;
 
-      // Insert record using parameterized query
-      await sql`
-        INSERT INTO registrations (
-          id, full_name, attendance_date, profession, profession_other, company, phone, email, event_key, submission_id, confirmation_sent
-        ) VALUES (
-          ${recordId}, ${fullName}, ${attendanceDate}, ${profession}, ${professionOther}, ${company}, ${cleanPhone}, ${email}, ${eventKey}, ${submissionId}, TRUE
-        )
-        ON CONFLICT (submission_id) DO NOTHING;
-      `;
-    } else {
+        // Insert record using parameterized query
+        await sql`
+          INSERT INTO registrations (
+            id, full_name, attendance_date, profession, profession_other, company, phone, email, event_key, submission_id, confirmation_sent
+          ) VALUES (
+            ${recordId}, ${fullName}, ${attendanceDate}, ${profession}, ${professionOther}, ${company}, ${cleanPhone}, ${email}, ${eventKey}, ${submissionId}, TRUE
+          )
+          ON CONFLICT (submission_id) DO NOTHING;
+        `;
+        persisted = true;
+      } catch (neonErr) {
+        console.warn('Neon persistence warning:', neonErr);
+      }
+    }
+
+    if (!persisted) {
       // Local development fallback
       saveLocalRegistration(registrationRecord);
     }

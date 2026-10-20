@@ -8,6 +8,7 @@ import {
   buildReminderDayOfEmail,
   sendEmail,
 } from './email';
+import { getSupabase } from './supabase';
 
 interface RegistrationRecord {
   id: string;
@@ -71,17 +72,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     let records: RegistrationRecord[] = [];
+    const supabase = getSupabase();
 
-    if (dbUrl) {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('registrations').select('*');
+        if (!error && data && data.length > 0) {
+          records = data as RegistrationRecord[];
+        }
+      } catch (sbErr) {
+        console.warn('Supabase fetch error in cron-reminders:', sbErr);
+      }
+    }
+
+    if (records.length === 0 && dbUrl) {
       const sql = neon(dbUrl);
       const rows = await sql`
         SELECT * FROM registrations;
       `;
       records = rows as RegistrationRecord[];
-    } else {
-      if (fs.existsSync(LOCAL_DATA_FILE)) {
-        records = JSON.parse(fs.readFileSync(LOCAL_DATA_FILE, 'utf-8'));
-      }
+    }
+
+    if (records.length === 0 && fs.existsSync(LOCAL_DATA_FILE)) {
+      records = JSON.parse(fs.readFileSync(LOCAL_DATA_FILE, 'utf-8'));
     }
 
     results.processed = records.length;
@@ -118,6 +131,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           });
           record.reminder_3days_sent = true;
 
+          if (supabase) {
+            await supabase.from('registrations').update({ reminder_3days_sent: true }).eq('id', record.id);
+          }
           if (dbUrl) {
             const sql = neon(dbUrl);
             await sql`
@@ -142,6 +158,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           });
           record.reminder_1day_sent = true;
 
+          if (supabase) {
+            await supabase.from('registrations').update({ reminder_1day_sent: true }).eq('id', record.id);
+          }
           if (dbUrl) {
             const sql = neon(dbUrl);
             await sql`
@@ -166,6 +185,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           });
           record.reminder_dayof_sent = true;
 
+          if (supabase) {
+            await supabase.from('registrations').update({ reminder_dayof_sent: true }).eq('id', record.id);
+          }
           if (dbUrl) {
             const sql = neon(dbUrl);
             await sql`
@@ -178,7 +200,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Save updated state back to local file if not using database
-    if (!dbUrl && !dryRun && fs.existsSync(LOCAL_DATA_FILE)) {
+    if (!supabase && !dbUrl && !dryRun && fs.existsSync(LOCAL_DATA_FILE)) {
       fs.writeFileSync(LOCAL_DATA_FILE, JSON.stringify(records, null, 2), 'utf-8');
     }
 

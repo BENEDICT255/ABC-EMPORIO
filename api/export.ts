@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { neon } from '@neondatabase/serverless';
 import fs from 'node:fs';
 import path from 'node:path';
+import { getSupabase } from './supabase';
 
 interface ExtendedRequest extends IncomingMessage {
   query?: Record<string, string>;
@@ -33,9 +34,26 @@ export default async function handler(req: ExtendedRequest, res: ExtendedRespons
 
   try {
     let records: Array<Record<string, unknown>> = [];
+    const supabase = getSupabase();
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('registrations')
+          .select('id, full_name, attendance_date, profession, profession_other, company, phone, email, event_key, created_at')
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          records = data;
+        }
+      } catch (sbErr) {
+        console.warn('Supabase export fetch warning:', sbErr);
+      }
+    }
+
     const dbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
-    if (dbUrl) {
+    if (records.length === 0 && dbUrl) {
       const sql = neon(dbUrl);
       const rows = await sql`
         SELECT id, full_name, attendance_date, profession, profession_other, company, phone, email, event_key, created_at
@@ -43,10 +61,10 @@ export default async function handler(req: ExtendedRequest, res: ExtendedRespons
         ORDER BY created_at DESC;
       `;
       records = rows as Array<Record<string, unknown>>;
-    } else {
-      if (fs.existsSync(LOCAL_DATA_FILE)) {
-        records = JSON.parse(fs.readFileSync(LOCAL_DATA_FILE, 'utf-8'));
-      }
+    }
+
+    if (records.length === 0 && fs.existsSync(LOCAL_DATA_FILE)) {
+      records = JSON.parse(fs.readFileSync(LOCAL_DATA_FILE, 'utf-8'));
     }
 
     if (format === 'csv') {
