@@ -1,92 +1,136 @@
 /**
- * Calendar helpers. Calendar actions are only offered once the date, start time, time zone
- * and a verified venue address are all confirmed — otherwise nothing is generated.
+ * Calendar Reminder Utilities for ABC Emporio — The Show & Tell Experience
+ * Event Hours: 10:00 AM – 5:00 PM EAT (UTC+3)
  */
-import type { EventConfig } from '../config/event';
-import { getSchedule, type Schedule } from './schedule';
 
-export interface CalendarEvent {
+export interface CalendarEventDetails {
   title: string;
-  description: string;
+  startDateIso: string;
+  endDateIso: string;
+  startIsoOutlook: string;
+  endIsoOutlook: string;
   location: string;
-  schedule: Schedule;
+  details: string;
+  isDay2: boolean;
+  dateFormatted: string;
 }
 
-export function getCalendarEvent(cfg: EventConfig, pageUrl: string): CalendarEvent | null {
-  const schedule = getSchedule(cfg);
-  if (!schedule || !cfg.venueVerified || !cfg.venueAddress) return null;
-  const location = cfg.venueName ? `${cfg.venueName}, ${cfg.venueAddress}` : cfg.venueAddress;
+export function getCalendarEventDetails(attendanceDate: string): CalendarEventDetails {
+  const isDay2 = attendanceDate.includes('3 November') || attendanceDate.includes('Tuesday');
+  
+  // 10:00 AM EAT is 07:00 UTC | 5:00 PM EAT is 14:00 UTC
+  const startDateIso = isDay2 ? '20261103T070000Z' : '20261102T070000Z';
+  const endDateIso = isDay2 ? '20261103T140000Z' : '20261102T140000Z';
+
+  // Outlook format: YYYY-MM-DDTHH:mm:ss+03:00
+  const startIsoOutlook = isDay2 ? '2026-11-03T10:00:00+03:00' : '2026-11-02T10:00:00+03:00';
+  const endIsoOutlook = isDay2 ? '2026-11-03T17:00:00+03:00' : '2026-11-02T17:00:00+03:00';
+
+  const dateFormatted = isDay2 ? 'Tuesday, 3 November 2026' : 'Monday, 2 November 2026';
+
+  const title = 'ABC Emporio — The Show & Tell Experience';
+  const location = 'ABC Emporio Showroom, Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam, Tanzania';
+  const details = [
+    'You are registered for The Show & Tell Experience at ABC Emporio.',
+    '',
+    `Date: ${dateFormatted}`,
+    'Hours: 10:00 AM – 5:00 PM',
+    'Venue: ABC Emporio Showroom',
+    'Address: Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam',
+    'Concierge Desk: +255 791 261 881 / info@abctanzania.com',
+    'Google Maps: https://www.google.com/maps/search/?api=1&query=ABC+EMPORIO+-+Dar+Es+Salaam,+Next+to+vodacom+head+office,+Bagamoyo+Rd,+Dar+es+Salaam',
+    'Website: https://showandtell.abcemporio.com'
+  ].join('\n');
+
   return {
-    title: `ABC Emporio — ${cfg.eventName}`,
-    description: `${cfg.eventDescription}\n\nEvent details: ${pageUrl}`,
+    title,
+    startDateIso,
+    endDateIso,
+    startIsoOutlook,
+    endIsoOutlook,
     location,
-    schedule,
+    details,
+    isDay2,
+    dateFormatted,
   };
 }
 
-/** UTC timestamp in iCalendar basic format, e.g. 20261114T130000Z */
-function icsStamp(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-}
-
-/** RFC 5545 text escaping + 75-octet line folding (approximated by characters). */
-function icsText(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
-}
-
-function fold(line: string): string {
-  const out: string[] = [];
-  let rest = line;
-  while (rest.length > 74) {
-    out.push(rest.slice(0, 74));
-    rest = ' ' + rest.slice(74);
-  }
-  out.push(rest);
-  return out.join('\r\n');
-}
-
-export function buildIcs(ev: CalendarEvent, uidHost: string): string {
-  const { start, end } = ev.schedule;
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//ABC Emporio//Show and Tell Invitation//EN',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    'BEGIN:VEVENT',
-    `UID:show-and-tell-${icsStamp(start)}@${uidHost}`,
-    `DTSTAMP:${icsStamp(new Date())}`,
-    `DTSTART:${icsStamp(start)}`,
-    ...(end ? [`DTEND:${icsStamp(end)}`] : []),
-    `SUMMARY:${icsText(ev.title)}`,
-    `DESCRIPTION:${icsText(ev.description)}`,
-    `LOCATION:${icsText(ev.location)}`,
-    'END:VEVENT',
-    'END:VCALENDAR',
-  ];
-  return lines.map(fold).join('\r\n') + '\r\n';
-}
-
-export function googleCalendarUrl(ev: CalendarEvent): string {
-  const { start, end } = ev.schedule;
+/** Generate 1-Click Google Calendar URL */
+export function generateGoogleCalendarUrl(attendanceDate: string): string {
+  const event = getCalendarEventDetails(attendanceDate);
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: ev.title,
-    dates: `${icsStamp(start)}/${icsStamp(end ?? start)}`,
-    details: ev.description,
-    location: ev.location,
+    text: event.title,
+    dates: `${event.startDateIso}/${event.endDateIso}`,
+    details: event.details,
+    location: event.location,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-export function downloadIcs(ev: CalendarEvent, uidHost: string): void {
-  const blob = new Blob([buildIcs(ev, uidHost)], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'abc-emporio-show-and-tell.ics';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+/** Generate 1-Click Outlook Web / Office 365 Calendar URL */
+export function generateOutlookCalendarUrl(attendanceDate: string): string {
+  const event = getCalendarEventDetails(attendanceDate);
+  const params = new URLSearchParams({
+    path: '/calendar/action/compose',
+    rru: 'addevent',
+    subject: event.title,
+    startdt: event.startIsoOutlook,
+    enddt: event.endIsoOutlook,
+    body: event.details,
+    location: event.location,
+  });
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
+
+/** Generate standard iCalendar (.ics) content (Apple Calendar, Outlook desktop, Android) */
+export function generateIcsContent(attendanceDate: string): string {
+  const event = getCalendarEventDetails(attendanceDate);
+  const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const cleanDescription = event.details.replace(/\n/g, '\\n');
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//ABC Emporio//Show and Tell Experience//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:abc-showtell-${event.isDay2 ? '20261103' : '20261102'}-${Date.now()}@abcemporio.com`,
+    `DTSTAMP:${now}`,
+    `DTSTART:${event.startDateIso}`,
+    `DTEND:${event.endDateIso}`,
+    `SUMMARY:${event.title}`,
+    `DESCRIPTION:${cleanDescription}`,
+    `LOCATION:${event.location}`,
+    'STATUS:CONFIRMED',
+    'BEGIN:VALARM',
+    'TRIGGER:-P1D',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Reminder: ABC Emporio Show & Tell Experience tomorrow',
+    'END:VALARM',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT2H',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:ABC Emporio Show & Tell Experience starts in 2 hours',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
+
+/** Triggers download of .ics calendar file for Apple Calendar & native devices */
+export function downloadIcsFile(attendanceDate: string): void {
+  const event = getCalendarEventDetails(attendanceDate);
+  const ics = generateIcsContent(attendanceDate);
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const filename = event.isDay2 ? 'abc-emporio-showtell-3nov.ics' : 'abc-emporio-showtell-2nov.ics';
+
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(link.href);
 }

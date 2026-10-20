@@ -132,6 +132,16 @@ function wrapHtmlEmail(title: string, eyebrow: string, contentHtml: string): str
 export function buildConfirmationEmail(recipient: EmailRecipient): { subject: string; html: string; text: string } {
   const subject = `Registration Confirmed: ABC Emporio Show & Tell Experience (${recipient.attendanceDate})`;
 
+  const isDay2 = recipient.attendanceDate.includes('3 November') || recipient.attendanceDate.includes('Tuesday');
+  const startIso = isDay2 ? '20261103T070000Z' : '20261102T070000Z';
+  const endIso = isDay2 ? '20261103T140000Z' : '20261102T140000Z';
+  const titleParam = encodeURIComponent('ABC Emporio — The Show & Tell Experience');
+  const locationParam = encodeURIComponent('ABC Emporio Showroom, Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam, Tanzania');
+  const detailsParam = encodeURIComponent(
+    `The Show & Tell Experience at ABC Emporio.\n\nDate: ${recipient.attendanceDate}\nHours: 10:00 AM – 5:00 PM\nVenue: ABC Emporio Showroom\nConcierge: +255 791 261 881\nWebsite: https://showandtell.abcemporio.com`
+  );
+  const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titleParam}&dates=${startIso}/${endIso}&details=${detailsParam}&location=${locationParam}`;
+
   const contentHtml = `
     <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 400; color: #111111;">
       Dear ${recipient.name},
@@ -150,12 +160,23 @@ export function buildConfirmationEmail(recipient: EmailRecipient): { subject: st
         <td style="padding: 12px 0; font-size: 13px; color: #777777; border-top: 1px solid #f0ede8;">ATTENDANCE DATE</td>
         <td style="padding: 12px 0; font-size: 14px; font-weight: 700; color: #b89758; border-top: 1px solid #f0ede8;">${recipient.attendanceDate}</td>
       </tr>
+      <tr>
+        <td style="padding: 12px 0; font-size: 13px; color: #777777; border-top: 1px solid #f0ede8;">HOURS</td>
+        <td style="padding: 12px 0; font-size: 14px; color: #111111; border-top: 1px solid #f0ede8;">10:00 AM – 5:00 PM EAT</td>
+      </tr>
       ${recipient.phone ? `
       <tr>
         <td style="padding: 12px 0; font-size: 13px; color: #777777; border-top: 1px solid #f0ede8;">PHONE / WHATSAPP</td>
         <td style="padding: 12px 0; font-size: 14px; color: #111111; border-top: 1px solid #f0ede8;">${recipient.phone}</td>
       </tr>` : ''}
     </table>
+
+    <!-- 1-Click Add to Google Calendar Button -->
+    <div style="margin: 28px 0 20px 0; text-align: center;">
+      <a href="${googleCalUrl}" target="_blank" style="display: inline-block; background-color: #111111; color: #ffffff; border: 1px solid #b89758; padding: 13px 26px; text-decoration: none; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; border-radius: 3px;">
+        &#128197; Add to Google Calendar (10:00 AM – 5:00 PM)
+      </a>
+    </div>
 
     <p style="margin: 0 0 16px 0; font-size: 14px; color: #444444; line-height: 1.7;">
       Join us for a curated showcase dedicated to architectural surfaces, luxury sanitary ware, bespoke fixtures, and the craftsmanship that defines refined spaces.
@@ -171,10 +192,11 @@ Dear ${recipient.name},
 Thank you for registering for The Show & Tell Experience at ABC Emporio. We are pleased to confirm your attendance.
 
 ATTENDANCE DATE: ${recipient.attendanceDate}
+HOURS: 10:00 am – 5:00 pm
 GUEST: ${recipient.name}
 VENUE: ${VENUE_NAME}
 ADDRESS: ${VENUE_ADDRESS}
-SHOWROOM HOURS: Closes at 5:30 pm
+ADD TO CALENDAR: ${googleCalUrl}
 MAPS: ${VENUE_MAPS_URL}
 
 We look forward to welcoming you.
@@ -310,7 +332,7 @@ Dear ${recipient.name},
 Today is the day! We look forward to welcoming you to The Show & Tell Experience at ABC Emporio.
 
 LOCATION: ${VENUE_ADDRESS}
-SHOWROOM HOURS: Closes at 5:30 pm
+SHOWROOM HOURS: 10:00 am – 5:00 pm
 MAPS: ${VENUE_MAPS_URL}
 CONCIERGE PHONE: ${CONCIERGE_PHONE}
   `.trim();

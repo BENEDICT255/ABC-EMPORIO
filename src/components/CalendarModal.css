@@ -1,0 +1,312 @@
+/* ==========================================================================
+   ABC EMPORIO — CALENDAR MODAL STYLES
+   Luxury dark theme matching showroom aesthetics
+   ========================================================================== */
+
+.cal-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 9, 12, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: calModalFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes calModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cal-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(180deg, #181b20 0%, #111317 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  padding: 36px 32px 28px 32px;
+  box-shadow: 
+    0 32px 80px rgba(0, 0, 0, 0.85),
+    0 0 60px rgba(184, 151, 88, 0.12);
+  animation: calCardSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes calCardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Elegant gold accent top glow line */
+.cal-modal-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(184, 151, 88, 0) 0%,
+    rgba(184, 151, 88, 0.8) 30%,
+    rgba(230, 207, 155, 1) 50%,
+    rgba(184, 151, 88, 0.8) 70%,
+    rgba(184, 151, 88, 0) 100%
+  );
+}
+
+/* Close button */
+.cal-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: #a0a4a8;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cal-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+/* Header */
+.cal-modal-header {
+  margin-bottom: 22px;
+}
+
+.cal-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(184, 151, 88, 0.12);
+  border: 1px solid rgba(184, 151, 88, 0.32);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #d1b172;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.cal-modal-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.cal-modal-title {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(24px, 3.2vw, 30px);
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
+}
+
+.cal-modal-intro {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #a0a8b2;
+  margin: 0;
+}
+
+/* Event Snapshot Summary */
+.cal-modal-summary {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid #b89758;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.cal-modal-summary__row {
+  display: flex;
+  gap: 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 4px 0;
+}
+
+.cal-modal-summary__label {
+  font-family: var(--font-body);
+  color: #838e9c;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  min-width: 65px;
+}
+
+.cal-modal-summary__value {
+  color: #e2e8f0;
+  font-weight: 400;
+}
+
+.cal-modal-summary__value--highlight {
+  color: #e6cf9b;
+  font-weight: 600;
+}
+
+/* Calendar Action Buttons */
+.cal-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.cal-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  font-family: var(--font-body);
+  text-align: left;
+  width: 100%;
+}
+
+.cal-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(184, 151, 88, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.cal-btn:active {
+  transform: translateY(0);
+}
+
+.cal-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.cal-btn__text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cal-btn__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.cal-btn__desc {
+  font-size: 11.5px;
+  color: #8a94a2;
+}
+
+.cal-btn__arrow {
+  color: #b89758;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.cal-btn:hover .cal-btn__arrow {
+  transform: translateX(4px);
+  color: #e6cf9b;
+}
+
+/* Specific button styling nuances */
+.cal-btn--google:hover {
+  border-color: rgba(184, 151, 88, 0.65);
+}
+
+.cal-btn--apple:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cal-btn--outlook:hover {
+  border-color: rgba(96, 165, 250, 0.6);
+}
+
+/* Footer Dismissal */
+.cal-modal-footer {
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 16px;
+}
+
+.cal-modal-dismiss-btn {
+  background: transparent;
+  border: none;
+  color: #8b95a3;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: color 0.2s ease;
+}
+
+.cal-modal-dismiss-btn:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 540px) {
+  .cal-modal-card {
+    padding: 28px 20px 22px 20px;
+  }
+
+  .cal-modal-summary__row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cal-modal-summary__label {
+    min-width: unset;
+  }
+}
