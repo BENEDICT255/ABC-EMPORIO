@@ -91,20 +91,42 @@ function localApiMiddleware(): Plugin {
               const filePath = path.join(dataDir, 'registrations.json');
               const current = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
 
+              const attendanceDate = body.attendanceDate || body.attendance_date || 'Monday, 2 November 2026';
               const record = {
                 id: `reg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
                 fullName: body.fullName || '',
+                attendanceDate,
                 profession: body.profession || '',
                 professionOther: body.professionOther || '',
                 company: body.company || '',
                 phone: body.phone || '',
                 email: body.email || '',
                 submissionId: body.submissionId || `${Date.now()}`,
+                confirmation_sent: true,
+                reminder_3days_sent: false,
+                reminder_1day_sent: false,
+                reminder_dayof_sent: false,
                 createdAt: new Date().toISOString(),
               };
 
               current.push(record);
               fs.writeFileSync(filePath, JSON.stringify(current, null, 2), 'utf-8');
+
+              // Log simulated confirmation email to data/email_logs.json
+              if (body.email) {
+                const logFile = path.join(dataDir, 'email_logs.json');
+                const emailLogs = fs.existsSync(logFile) ? JSON.parse(fs.readFileSync(logFile, 'utf-8')) : [];
+                emailLogs.push({
+                  id: `email_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                  to: body.email,
+                  subject: `Registration Confirmed: ABC Emporio Show & Tell Experience (${attendanceDate})`,
+                  type: 'confirmation',
+                  timestamp: new Date().toISOString(),
+                  simulated: true,
+                });
+                fs.writeFileSync(logFile, JSON.stringify(emailLogs, null, 2), 'utf-8');
+                console.log(`[LOCAL DEV EMAIL] Confirmation dispatched to: ${body.email} for date: ${attendanceDate}`);
+              }
 
               res.setHeader('Content-Type', 'application/json');
               return res.end(JSON.stringify({ ok: true, id: record.id, message: 'Registration confirmed' }));
@@ -115,6 +137,48 @@ function localApiMiddleware(): Plugin {
             }
           });
           return;
+        }
+
+        // /api/cron-reminders handler (local dev)
+        if (parsedUrl.pathname === '/api/cron-reminders') {
+          const token = parsedUrl.searchParams.get('token') || req.headers['x-organiser-token'];
+          if (token !== 'ABC_SHOWTELL_2026') {
+            res.statusCode = 401;
+            res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify({ ok: false, error: 'Unauthorized' }));
+          }
+
+          const filePath = path.join(process.cwd(), 'data', 'registrations.json');
+          const records = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
+          const dataDir = path.join(process.cwd(), 'data');
+          const logFile = path.join(dataDir, 'email_logs.json');
+          const emailLogs = fs.existsSync(logFile) ? JSON.parse(fs.readFileSync(logFile, 'utf-8')) : [];
+
+          let sentCount = 0;
+          for (const r of records) {
+            if (r.email && !r.reminder_3days_sent) {
+              r.reminder_3days_sent = true;
+              emailLogs.push({
+                id: `reminder_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                to: r.email,
+                subject: `3 Days to Go: ABC Emporio Show & Tell Experience (${r.attendanceDate})`,
+                type: 'reminder_3days',
+                timestamp: new Date().toISOString(),
+                simulated: true,
+              });
+              sentCount++;
+            }
+          }
+
+          fs.writeFileSync(filePath, JSON.stringify(records, null, 2), 'utf-8');
+          fs.writeFileSync(logFile, JSON.stringify(emailLogs, null, 2), 'utf-8');
+
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({
+            ok: true,
+            timestamp: new Date().toISOString(),
+            summary: { totalRecords: records.length, remindersSent: sentCount },
+          }));
         }
 
         // /api/export handler
@@ -132,12 +196,13 @@ function localApiMiddleware(): Plugin {
           const records = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
 
           if (format === 'csv') {
-            const header = 'ID,Full Name,Profession,Discipline,Company,Phone,Email,Created At\n';
+            const header = 'ID,Full Name,Attendance Date,Profession,Discipline,Company,Phone,Email,Created At\n';
             const rows = records.map((r: Record<string, unknown>) => {
               const clean = (val: unknown) => `"${String(val || '').replace(/"/g, '""')}"`;
               return [
                 clean(r.id),
                 clean(r.fullName),
+                clean(r.attendanceDate || r.attendance_date),
                 clean(r.profession),
                 clean(r.professionOther),
                 clean(r.company),

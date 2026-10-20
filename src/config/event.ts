@@ -32,6 +32,10 @@ export interface EventConfig {
   eventDescription: string;
 
   eventDate: string | null;
+  eventEndDate?: string | null;
+  eventDates?: string[];
+  eventDatesDisplay?: string;
+  attendanceOptions?: readonly string[];
   startTime: string | null;
   endTime: string | null;
   timeZone: string | null;
@@ -76,6 +80,14 @@ export const eventConfig: EventConfig = {
 
   // — Confirmed Event Details —
   eventDate: '2026-11-02',
+  eventEndDate: '2026-11-03',
+  eventDates: ['2026-11-02', '2026-11-03'],
+  eventDatesDisplay: '2 & 3 November 2026 (Monday & Tuesday)',
+  attendanceOptions: [
+    'Monday, 2 November 2026',
+    'Tuesday, 3 November 2026',
+    'Both Days (2 & 3 November 2026)',
+  ],
   startTime: null,
   endTime: null,
   timeZone: 'Africa/Dar_es_Salaam',

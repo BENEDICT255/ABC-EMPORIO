@@ -6,4 +6,9 @@ dist
 .DS_Store
 .env
 .env.*
+scratch/
+screenshot*.png
+data/email_logs.json
+hero/*.jfif
+
 

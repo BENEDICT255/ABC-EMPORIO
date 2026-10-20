@@ -2,9 +2,12 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
 import fs from 'node:fs';
 import path from 'node:path';
+import { buildConfirmationEmail, sendEmail } from './email';
 
 interface RsvpPayload {
   fullName: string;
+  attendanceDate?: string;
+  attendance_date?: string;
   profession: string;
   professionOther?: string;
   company?: string;
@@ -46,12 +49,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 1. Anti-spam honeypot
     if (body.honeypot && body.honeypot.trim().length > 0) {
-      // Reject bot submission silently or with generic success to confuse bots
+      // Reject bot submission silently with generic success
       return res.status(200).json({ ok: true, message: 'Received' });
     }
 
     // 2. Input validation
     const fullName = (body.fullName || '').trim();
+    const attendanceDate = (body.attendanceDate || body.attendance_date || 'Monday, 2 November 2026').trim();
     const profession = (body.profession || '').trim();
     const professionOther = (body.professionOther || '').trim();
     const company = (body.company || '').trim();
@@ -74,8 +78,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ ok: false, error: 'Please enter a valid phone number including country code.' });
     }
 
-    if (email && (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254)) {
-      return res.status(400).json({ ok: false, error: 'Please enter a valid email address or leave it empty.' });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254) {
+      return res.status(400).json({ ok: false, error: 'Please enter a valid email address to receive confirmation and reminders.' });
     }
 
     const recordId = `reg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -84,6 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const registrationRecord = {
       id: recordId,
       fullName,
+      attendanceDate,
       profession,
       professionOther,
       company,
@@ -91,6 +96,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       email,
       eventKey,
       submissionId,
+      confirmation_sent: true,
+      reminder_3days_sent: false,
+      reminder_1day_sent: false,
+      reminder_dayof_sent: false,
       createdAt,
     };
 
@@ -100,11 +109,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (dbUrl) {
       const sql = neon(dbUrl);
 
-      // Initialize table if it doesn't already exist
+      // Initialize table and add columns if they don't already exist
       await sql`
         CREATE TABLE IF NOT EXISTS registrations (
           id VARCHAR(64) PRIMARY KEY,
           full_name VARCHAR(120) NOT NULL,
+          attendance_date VARCHAR(80),
           profession VARCHAR(80) NOT NULL,
           profession_other VARCHAR(100),
           company VARCHAR(150),
@@ -112,28 +122,53 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           email VARCHAR(255),
           event_key VARCHAR(100) NOT NULL,
           submission_id VARCHAR(64) UNIQUE,
+          confirmation_sent BOOLEAN DEFAULT FALSE,
+          reminder_3days_sent BOOLEAN DEFAULT FALSE,
+          reminder_1day_sent BOOLEAN DEFAULT FALSE,
+          reminder_dayof_sent BOOLEAN DEFAULT FALSE,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
+      `;
+
+      await sql`
+        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS attendance_date VARCHAR(80);
+        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS confirmation_sent BOOLEAN DEFAULT FALSE;
+        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_3days_sent BOOLEAN DEFAULT FALSE;
+        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_1day_sent BOOLEAN DEFAULT FALSE;
+        ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reminder_dayof_sent BOOLEAN DEFAULT FALSE;
       `;
 
       // Insert record using parameterized query
       await sql`
         INSERT INTO registrations (
-          id, full_name, profession, profession_other, company, phone, email, event_key, submission_id
+          id, full_name, attendance_date, profession, profession_other, company, phone, email, event_key, submission_id, confirmation_sent
         ) VALUES (
-          ${recordId}, ${fullName}, ${profession}, ${professionOther}, ${company}, ${cleanPhone}, ${email}, ${eventKey}, ${submissionId}
+          ${recordId}, ${fullName}, ${attendanceDate}, ${profession}, ${professionOther}, ${company}, ${cleanPhone}, ${email}, ${eventKey}, ${submissionId}, TRUE
         )
         ON CONFLICT (submission_id) DO NOTHING;
       `;
     } else {
-      // Local development or pre-Neon configuration fallback
+      // Local development fallback
       saveLocalRegistration(registrationRecord);
+    }
+
+    // 4. Send Confirmation Email Immediately to Attendee
+    try {
+      const emailContent = buildConfirmationEmail({
+        name: fullName,
+        email,
+        attendanceDate,
+        phone: cleanPhone,
+      });
+      await sendEmail(email, emailContent.subject, emailContent.html, emailContent.text);
+    } catch (mailErr) {
+      console.warn('Confirmation email dispatch warning:', mailErr);
     }
 
     return res.status(200).json({
       ok: true,
       id: recordId,
-      message: 'Registration confirmed successfully.',
+      message: 'Registration confirmed successfully. A confirmation email has been dispatched.',
     });
   } catch (error: unknown) {
     console.error('Registration processing error:', error);

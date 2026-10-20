@@ -8,7 +8,8 @@
     "phone": "+255 791 261 881",
     "email": "david@chipperfield.com",
     "submissionId": "1792361221406",
-    "createdAt": "2026-10-18T22:07:01.406Z"
+    "createdAt": "2026-10-18T22:07:01.406Z",
+    "reminder_3days_sent": true
   },
   {
     "id": "reg_1792370063341_z9164h",
@@ -19,6 +20,39 @@
     "phone": "+255 788 111 222",
     "email": "norman@fosterandpartners.com",
     "submissionId": "1792370063341",
-    "createdAt": "2026-10-19T00:34:23.341Z"
+    "createdAt": "2026-10-19T00:34:23.341Z",
+    "reminder_3days_sent": true
+  },
+  {
+    "id": "reg_1792439207872_lbevju",
+    "fullName": "Zuberi Mwinyi",
+    "attendanceDate": "Monday, 2 November 2026",
+    "profession": "Architect",
+    "professionOther": "",
+    "company": "Zuberi Studio Architects",
+    "phone": "+255 791 261 881",
+    "email": "zuberi@example.com",
+    "submissionId": "1792439207872",
+    "confirmation_sent": true,
+    "reminder_3days_sent": true,
+    "reminder_1day_sent": false,
+    "reminder_dayof_sent": false,
+    "createdAt": "2026-10-19T19:46:47.872Z"
+  },
+  {
+    "id": "reg_1792440138853_wbu7l4",
+    "fullName": "Benedict Bisama",
+    "attendanceDate": "Monday, 2 November 2026",
+    "profession": "Architect",
+    "professionOther": "",
+    "company": "Helios",
+    "phone": "+255 743 689 457",
+    "email": "benedictbisama@gmail.com",
+    "submissionId": "652514f4-bcf5-4c90-b672-6c5a59c497ab",
+    "confirmation_sent": true,
+    "reminder_3days_sent": false,
+    "reminder_1day_sent": false,
+    "reminder_dayof_sent": false,
+    "createdAt": "2026-10-19T20:02:18.853Z"
   }
 ]

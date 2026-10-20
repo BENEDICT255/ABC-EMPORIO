@@ -7,11 +7,18 @@ export const HONEYPOT_FIELD = 'botcheck';
 export const WEB3FORMS_ACCESS_KEY = '00edc9f4-11cf-4ae3-aa71-c2b7919eb85c';
 export const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 
-export const PROFESSIONS = ['Architect', 'Engineer', 'Other'] as const;
+export const PROFESSIONS = ['Architect', 'Interior Designer', 'Builder / Developer', 'Engineer', 'Design Enthusiast', 'Other'] as const;
 export type Profession = (typeof PROFESSIONS)[number] | 'Architects' | 'Engineers' | 'Others';
+
+export const ATTENDANCE_DATES = [
+  'Monday, 2 November 2026',
+  'Tuesday, 3 November 2026',
+] as const;
+export type AttendanceDate = (typeof ATTENDANCE_DATES)[number];
 
 export interface RsvpInput {
   fullName: string;
+  attendanceDate: AttendanceDate | '';
   profession: Profession | '';
   professionOther: string;
   company: string;
@@ -58,6 +65,11 @@ export function validateRsvp(input: RsvpInput): FieldErrors {
     errors.fullName = `Please keep your name under ${LIMITS.fullName} characters.`;
   }
 
+  // attendanceDate is defaulted or optional
+  if (input.attendanceDate && !ATTENDANCE_DATES.includes(input.attendanceDate as any)) {
+    errors.attendanceDate = 'Please select a valid date.';
+  }
+
   if (!input.profession) {
     errors.profession = 'Please select your profession.';
   }
@@ -81,7 +93,7 @@ export function validateRsvp(input: RsvpInput): FieldErrors {
 
   const email = input.email.trim();
   if (email && (email.length > LIMITS.email || !EMAIL_RE.test(email))) {
-    errors.email = 'Please enter a valid email address, or leave this field empty.';
+    errors.email = 'Please enter a valid email address.';
   }
 
   return errors;
@@ -110,55 +122,82 @@ export async function submitRsvp(
     ? `Other (${safeText(input.professionOther)})`
     : input.profession;
 
-  const payload: Record<string, string> = {
+  // 1. Web3Forms Payload
+  const web3Payload: Record<string, string> = {
     access_key: WEB3FORMS_ACCESS_KEY,
-    subject: 'New RSVP - ABC Emporio Show & Tell Experience',
+    subject: `New RSVP - ABC Emporio (${input.attendanceDate || 'Show & Tell'})`,
     from_name: 'ABC Emporio RSVP',
     name: safeText(input.fullName),
+    'Attendance Date': input.attendanceDate,
+    attendance_date: input.attendanceDate,
     profession: professionDisplay,
     phone: normalisePhone(input.phone),
+    email: input.email.trim(),
     event: meta.eventName || 'ABC Emporio Show & Tell Experience',
   };
 
   if (input.company.trim()) {
-    payload.company = safeText(input.company);
-  }
-
-  if (input.email.trim()) {
-    payload.email = input.email.trim();
+    web3Payload.company = safeText(input.company);
   }
 
   if (meta.honeypot) {
-    payload.botcheck = meta.honeypot;
+    web3Payload.botcheck = meta.honeypot;
   }
+
+  // 2. Internal / Vercel Backend Payload (saves to database, sends confirmation email & schedules reminders)
+  const backendPayload = {
+    fullName: safeText(input.fullName),
+    attendanceDate: input.attendanceDate,
+    profession: input.profession,
+    professionOther: isOther ? safeText(input.professionOther) : '',
+    company: safeText(input.company),
+    phone: normalisePhone(input.phone),
+    email: input.email.trim(),
+    submissionId: meta.submissionId,
+    honeypot: meta.honeypot,
+    eventName: meta.eventName || 'ABC Emporio Show & Tell Experience',
+  };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
 
   try {
-    const res = await fetch(WEB3FORMS_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
+    // Submit to internal API (for database storage, confirmation email & reminders) and Web3Forms in parallel
+    const [backendRes, web3Res] = await Promise.allSettled([
+      fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(backendPayload),
+        signal: controller.signal,
+      }).then(async (r) => ({ status: r.status, data: await r.json().catch(() => ({})) })),
 
-    const data = await res.json().catch(() => null);
+      fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(web3Payload),
+        signal: controller.signal,
+      }).then(async (r) => ({ status: r.status, data: await r.json().catch(() => ({})) })),
+    ]);
 
-    if (res.ok && data && data.success === true) {
+    const backendOk = backendRes.status === 'fulfilled' && backendRes.value?.data?.ok === true;
+    const web3Ok = web3Res.status === 'fulfilled' && web3Res.value?.data?.success === true;
+
+    if (backendOk || web3Ok) {
       return { ok: true };
     }
+
+    const errorMsg =
+      (backendRes.status === 'fulfilled' && backendRes.value?.data?.error) ||
+      (web3Res.status === 'fulfilled' && web3Res.value?.data?.message) ||
+      "We couldn't complete your registration. Please check your connection and try again.";
 
     return {
       ok: false,
       reason: 'provider',
-      message: data?.message || "We couldn't complete your registration. Please check your connection and try again.",
+      message: errorMsg,
     };
   } catch (err: unknown) {
-    console.warn('Web3Forms submission failed:', err);
+    console.warn('RSVP submission error:', err);
     return {
       ok: false,
       reason: 'network',

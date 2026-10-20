@@ -72,8 +72,9 @@ export function getSchedule(cfg: EventConfig): Schedule | null {
   return { start, end, timeZone: cfg.timeZone };
 }
 
-/** Formats the date in the event's own time zone, e.g. "Saturday, 14 November 2026". */
+/** Formats the date in the event's own time zone, e.g. "Monday, 2 & Tuesday, 3 November 2026". */
 export function formatEventDate(cfg: EventConfig): string | null {
+  if (cfg.eventDatesDisplay) return cfg.eventDatesDisplay;
   if (!cfg.eventDate) return null;
   const tz = cfg.timeZone && isValidTimeZone(cfg.timeZone) ? cfg.timeZone : 'UTC';
   const noon = cfg.timeZone ? zonedTimeToUtc(cfg.eventDate, '12:00', tz) : null;

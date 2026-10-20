@@ -10,37 +10,49 @@
   isolation: isolate;
 }
 
-/* Background Slideshow Layer */
+/* Background Slideshow Layer — sits beneath .hero__gradient (z-index -1) */
 .hero__slides {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: -2;
   overflow: hidden;
   pointer-events: none;
+  background: var(--c-black);
+  contain: strict;
+  transform: translate3d(0, 0, 0);
 }
 
-.hero__layer {
+/* Persistent Slide Layers: All slides permanently resident in DOM & GPU memory.
+ * No elements are ever mounted or unmounted during transitions, eliminating compositor drops,
+ * layout shifts, and post-transition texture re-sync flickering.
+ */
+.hero__slide-layer {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   overflow: hidden;
-}
-
-.hero__layer--base {
-  z-index: 1;
-  opacity: 1;
-}
-
-.hero__layer--incoming {
-  z-index: 2;
   opacity: 0;
-  transition: opacity 1.8s ease-in-out;
+  z-index: 0;
+  pointer-events: none;
+  contain: strict;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   will-change: opacity;
+  transition: opacity 1800ms ease-in-out;
 }
 
-.hero__layer--incoming.is-fading-in {
+/* The active slide sits on top (z-index: 2) and smoothly dissolves in */
+.hero__slide-layer.is-active {
   opacity: 1;
+  z-index: 2;
+  transition: opacity 1800ms ease-in-out;
+}
+
+/* The previous slide sits solidly underneath (z-index: 1) during the crossfade */
+.hero__slide-layer.is-prev {
+  opacity: 1;
+  z-index: 1;
+  transition: none;
 }
 
 .hero__media {

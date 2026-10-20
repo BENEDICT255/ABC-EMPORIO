@@ -21,7 +21,7 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
 
         <div className="container closing__container">
           <div className="closing__content reveal">
-            <p className="label closing__label">
+            <p className="closing__label">
               <span className="closing__label-brand">→ ABC EMPORIO</span>
             </p>
             <h2 id="closing-heading" className="display closing__heading">
@@ -71,7 +71,7 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
             <p className="footer-col__text">Next to Vodacom Head Office,</p>
             <p className="footer-col__text">Bagamoyo Rd, Dar es Salaam</p>
             <p className="footer-col__detail">Plus Code: {links.plusCode}</p>
-            <p className="footer-col__detail">Showroom closes 5:30 pm</p>
+            <p className="footer-col__detail">Open &middot; Closes 5:30 pm</p>
           </div>
 
           {/* Vertical hairline divider */}
@@ -93,12 +93,12 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
               </li>
               <li>
                 <a
-                  href="https://www.instagram.com/abcceramics_tanzania/"
+                  href="https://www.instagram.com/abcemporio.tz/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer__link"
                 >
-                  Instagram: @abcceramics_tanzania
+                  Instagram: @abcemporio.tz
                 </a>
               </li>
               <li>

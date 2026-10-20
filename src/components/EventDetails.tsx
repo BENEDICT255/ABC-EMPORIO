@@ -39,9 +39,10 @@ export function EventDetails() {
             <span className="detail-col__eyebrow">WHEN</span>
             <div className="detail-col__body">
               <h3 className="h3 detail-col__title">
-                Monday, 2 November<br />2026
+                2 &amp; 3 November<br />2026
               </h3>
               <p className="detail-col__sub">
+                Monday &amp; Tuesday<br />
                 Showroom closes 5:30 pm
               </p>
             </div>

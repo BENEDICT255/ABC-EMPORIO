@@ -2,7 +2,6 @@ import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { content } from '../config/content';
 import { eventConfig } from '../config/event';
 import {
-  HONEYPOT_FIELD,
   PROFESSIONS,
   RSVP_FORM_NAME,
   createSubmissionId,
@@ -12,15 +11,14 @@ import {
   wasSubmittedThisSession,
   type EditableField,
   type FieldErrors,
-  type Profession,
   type RsvpInput,
 } from '../lib/registration';
 import { getRegistrationState } from '../lib/schedule';
-import { Arrow } from './ui';
 import './RSVPForm.css';
 
 const initialInput: RsvpInput = {
   fullName: '',
+  attendanceDate: 'Monday, 2 November 2026',
   profession: '',
   professionOther: '',
   company: '',
@@ -99,7 +97,7 @@ export function RSVPForm() {
 
   return (
     <section className="section section--dark rsvp-section" id="rsvp" aria-labelledby="rsvp-heading">
-      {/* Full-bleed decorative dark materials artwork anchored at bottom-left matching approved Page 3 reference */}
+      {/* Background artwork: Gemini_Generated_Image_fl82ygfl82ygfl82 */}
       <div className="rsvp-backdrop" aria-hidden="true">
         <img
           src="/assets/showtell/03_reserve_your_place_soft.webp"
@@ -113,30 +111,37 @@ export function RSVPForm() {
 
       <div className="container rsvp-container">
         <div className="rsvp-grid">
-          {/* Left column: Context & Privacy */}
+          {/* Left Column: Context & Privacy */}
           <div className="rsvp-info reveal">
-            <p className="label rsvp__label">
-              <span className="rsvp__label-accent">— RSVP</span>
-            </p>
-            <h2 id="rsvp-heading" className="display rsvp__heading">Reserve Your Place.</h2>
-            <p className="lead rsvp__intro">{rsvp.intro}</p>
+            <div className="rsvp__badge">
+              <span className="rsvp__badge-line" aria-hidden="true" />
+              <span className="rsvp__badge-text">RSVP</span>
+            </div>
 
-            {/* Hairline divider between intro and privacy */}
-            <div className="rsvp-info__divider" aria-hidden="true" />
+            <h2 id="rsvp-heading" className="display rsvp__heading">
+              Reserve Your Place.
+            </h2>
+
+            <p className="lead rsvp__intro">
+              We look forward to welcoming you. Please complete the form below to confirm your attendance.
+            </p>
+
+            {/* Hairline divider */}
+            <div className="rsvp__divider" aria-hidden="true" />
 
             <div className="rsvp-privacy">
               <h3 className="rsvp-privacy__title">HOW WE USE YOUR DETAILS</h3>
               <p className="rsvp-privacy__text">
-                Your details are collected by ABC Emporio solely to manage your attendance at the Show &amp; Tell Experience — for example, to confirm your place or share event updates. They are stored securely with our website and form provider, and are not used for general marketing or added to any mailing list.
+                Your details are collected by ABC Emporio solely to manage your attendance at the Show &amp; Tell Experience — for example, to confirm your place or share event updates. They are stored securely and are not used for general marketing or added to any mailing list.
               </p>
-              <a href="#details" className="rsvp-privacy__link text-link">
+              <a href="#details" className="rsvp-privacy__link">
                 <span>Full privacy information</span>
-                <Arrow />
+                <span className="rsvp-privacy__arrow" aria-hidden="true">&rarr;</span>
               </a>
             </div>
           </div>
 
-          {/* Right column: Form Card */}
+          {/* Right Column: Form */}
           <div className="rsvp-form-card reveal">
             {isClosed ? (
               <div className="rsvp-status rsvp-status--closed">
@@ -150,7 +155,27 @@ export function RSVPForm() {
                 <p className="rsvp-status__body">
                   Your registration for the ABC Emporio Show &amp; Tell Experience has been received.
                 </p>
-                <p className="rsvp-status__closing">We look forward to welcoming you.</p>
+                <div className="rsvp-status__detail-box">
+                  <div className="rsvp-status__detail-row">
+                    <span className="rsvp-status__detail-label">NAME:</span>
+                    <span className="rsvp-status__detail-value">{input.fullName}</span>
+                  </div>
+                  <div className="rsvp-status__detail-row">
+                    <span className="rsvp-status__detail-label">DATE:</span>
+                    <span className="rsvp-status__detail-value">{input.attendanceDate}</span>
+                  </div>
+                  <div className="rsvp-status__detail-row">
+                    <span className="rsvp-status__detail-label">PROFESSION:</span>
+                    <span className="rsvp-status__detail-value">{input.profession}</span>
+                  </div>
+                  <div className="rsvp-status__detail-row">
+                    <span className="rsvp-status__detail-label">PHONE:</span>
+                    <span className="rsvp-status__detail-value">{input.phone}</span>
+                  </div>
+                </div>
+                <p className="rsvp-status__reminder-note">
+                  We look forward to welcoming you to the showroom.
+                </p>
                 <button type="button" className="btn btn--ghost rsvp-status__btn" onClick={handleReset}>
                   {rsvp.registerAnother}
                 </button>
@@ -163,19 +188,16 @@ export function RSVPForm() {
                 className="rsvp-form"
               >
                 {/* Honeypot anti-spam field */}
-                <div className="visually-hidden" aria-hidden="true">
-                  <label htmlFor="bot-field">Do not fill this field</label>
-                  <input
-                    id="bot-field"
-                    type="checkbox"
-                    name={HONEYPOT_FIELD}
-                    checked={Boolean(honeypot)}
-                    onChange={(e) => setHoneypot(e.target.checked ? 'bot' : '')}
-                    tabIndex={-1}
-                    autoComplete="off"
-                    style={{ display: 'none' }}
-                  />
-                </div>
+                <input
+                  type="checkbox"
+                  name="botcheck"
+                  checked={Boolean(honeypot)}
+                  onChange={(e) => setHoneypot(e.target.checked ? 'bot' : '')}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{ display: 'none' }}
+                  aria-hidden="true"
+                />
 
                 {errorMessage && (
                   <div className="rsvp-error-banner" role="alert">
@@ -183,10 +205,50 @@ export function RSVPForm() {
                   </div>
                 )}
 
-                {/* Full name */}
+                {/* 1. Choose Reservation Date (The Two Options) */}
+                <div className="form-group">
+                  <label className="form-label">
+                    CHOOSE RESERVATION DATE <span className="form-req" aria-hidden="true">•</span>
+                  </label>
+                  <div className="date-options-row" role="radiogroup" aria-label="Choose reservation date">
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={input.attendanceDate === 'Monday, 2 November 2026'}
+                      className={`date-option-btn ${input.attendanceDate === 'Monday, 2 November 2026' ? 'date-option-btn--active' : ''}`}
+                      onClick={() => {
+                        setInput((prev) => ({ ...prev, attendanceDate: 'Monday, 2 November 2026' }));
+                        if (errors.attendanceDate) setErrors((prev) => ({ ...prev, attendanceDate: undefined }));
+                      }}
+                      disabled={status === 'submitting'}
+                    >
+                      <span className="date-option-dot" aria-hidden="true" />
+                      <span className="date-option-title">Monday, 2 November 2026</span>
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={input.attendanceDate === 'Tuesday, 3 November 2026'}
+                      className={`date-option-btn ${input.attendanceDate === 'Tuesday, 3 November 2026' ? 'date-option-btn--active' : ''}`}
+                      onClick={() => {
+                        setInput((prev) => ({ ...prev, attendanceDate: 'Tuesday, 3 November 2026' }));
+                        if (errors.attendanceDate) setErrors((prev) => ({ ...prev, attendanceDate: undefined }));
+                      }}
+                      disabled={status === 'submitting'}
+                    >
+                      <span className="date-option-dot" aria-hidden="true" />
+                      <span className="date-option-title">Tuesday, 3 November 2026</span>
+                    </button>
+                  </div>
+                  {errors.attendanceDate && (
+                    <p className="form-error" role="alert">{errors.attendanceDate}</p>
+                  )}
+                </div>
+
+                {/* 2. Full Name */}
                 <div className="form-group">
                   <label htmlFor="fullName" className="form-label">
-                    FULL NAME <span className="form-req" aria-hidden="true">*</span>
+                    FULL NAME <span className="form-req" aria-hidden="true">•</span>
                   </label>
                   <input
                     id="fullName"
@@ -208,10 +270,10 @@ export function RSVPForm() {
                   )}
                 </div>
 
-                {/* Profession */}
+                {/* 2. Profession */}
                 <div className="form-group">
                   <label htmlFor="profession" className="form-label">
-                    PROFESSION <span className="form-req" aria-hidden="true">*</span>
+                    PROFESSION <span className="form-req" aria-hidden="true">•</span>
                   </label>
                   <div className="form-select-wrapper">
                     <select
@@ -227,18 +289,23 @@ export function RSVPForm() {
                       disabled={status === 'submitting'}
                     >
                       <option value="">Select your profession</option>
-                      {PROFESSIONS.map((p: Profession) => (
+                      {PROFESSIONS.map((p) => (
                         <option key={p} value={p}>{p}</option>
                       ))}
                     </select>
+                    <span className="form-select-chevron" aria-hidden="true">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path d="M1 1.5L6 6.5L11 1.5" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
                   </div>
                   {errors.profession && (
                     <p id="profession-error" className="form-error" role="alert">{errors.profession}</p>
                   )}
                 </div>
 
-                {/* Clarification if Other */}
-                {(input.profession === 'Other' || input.profession === 'Others') && (
+                {/* Optional profession specification if Other */}
+                {input.profession === 'Other' && (
                   <div className="form-group">
                     <label htmlFor="professionOther" className="form-label">
                       PLEASE SPECIFY YOUR ROLE / DISCIPLINE
@@ -248,18 +315,15 @@ export function RSVPForm() {
                       name="professionOther"
                       type="text"
                       className={`form-input ${errors.professionOther ? 'form-input--error' : ''}`}
-                      placeholder="e.g. Interior Designer, Project Director"
+                      placeholder="e.g. Interior Stylist, Project Director"
                       value={input.professionOther}
                       onChange={handleChange}
                       disabled={status === 'submitting'}
                     />
-                    {errors.professionOther && (
-                      <p id="professionOther-error" className="form-error" role="alert">{errors.professionOther}</p>
-                    )}
                   </div>
                 )}
 
-                {/* Company / Firm */}
+                {/* 3. Company / Firm */}
                 <div className="form-group">
                   <label htmlFor="company" className="form-label">
                     COMPANY / FIRM <span className="form-opt">(optional)</span>
@@ -280,10 +344,10 @@ export function RSVPForm() {
                   )}
                 </div>
 
-                {/* Phone / WhatsApp */}
+                {/* 4. Phone / WhatsApp */}
                 <div className="form-group">
                   <label htmlFor="phone" className="form-label">
-                    PHONE / WHATSAPP NUMBER <span className="form-req" aria-hidden="true">*</span>
+                    PHONE / WHATSAPP NUMBER <span className="form-req" aria-hidden="true">•</span>
                   </label>
                   <input
                     id="phone"
@@ -306,7 +370,7 @@ export function RSVPForm() {
                   )}
                 </div>
 
-                {/* Email */}
+                {/* 5. Email Address */}
                 <div className="form-group">
                   <label htmlFor="email" className="form-label">
                     EMAIL ADDRESS <span className="form-opt">(optional)</span>
@@ -330,14 +394,15 @@ export function RSVPForm() {
                   )}
                 </div>
 
-                <div className="rsvp-form__submit-row">
+                {/* Submit button */}
+                <div className="form-submit-row">
                   <button
                     type="submit"
-                    className="btn rsvp-form__submit"
+                    className="rsvp-submit-btn"
                     disabled={status === 'submitting'}
                   >
-                    {status === 'submitting' ? rsvp.submitting : 'CONFIRM ATTENDANCE'}
-                    {status !== 'submitting' && <Arrow />}
+                    <span>{status === 'submitting' ? 'CONFIRMING...' : 'CONFIRM ATTENDANCE'}</span>
+                    <span className="submit-arrow" aria-hidden="true">&rarr;</span>
                   </button>
                 </div>
               </form>

@@ -1,17 +1,24 @@
+/* Page 3: Reserve Your Place (RSVP Form)
+ * Pixel-perfect alignment with approved UI reference:
+ * - Left column at 16vw padding, giving full breathing room to photorealistic marble pedestals & olive branches
+ * - Exact typography, red '— RSVP' tag, serif heading, hairline divider, and privacy information
+ * - 5 input fields (Name, Profession, Company, Phone, Email) with dark translucent styling
+ * - Solid full-width white button 'CONFIRM ATTENDANCE →' aligned with bottom of left column
+ */
+
 .rsvp-section {
   position: relative;
-  background: #111111;
+  background: #0a0b0e;
   color: var(--c-white);
-  border-top: 1px solid var(--c-line-on-dark);
   overflow: hidden;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: clamp(64px, 8vh, 105px);
+  padding-block: clamp(80px, 11vh, 120px);
 }
 
-/* Full-bleed decorative dark materials artwork anchored at left-bottom matching approved Page 3 reference */
+/* Full-bleed decorative artwork */
 .rsvp-backdrop {
   position: absolute;
   inset: 0;
@@ -24,136 +31,156 @@
 
 .rsvp-backdrop__img {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+  left: -260px;
+  top: 0;
+  width: calc(100% + 360px);
   height: 100%;
   object-fit: cover;
-  object-position: -120px bottom;
+  object-position: left center;
   display: block;
 }
 
+/* Gradient overlay:
+ * Transparent on the left to display the marble pedestals, olive leaves and dramatic lighting,
+ * gently transitioning into solid dark contrast for the RSVP context and form fields
+ */
 .rsvp-backdrop__overlay {
   position: absolute;
   inset: 0;
-  background: 
-    linear-gradient(90deg, 
-      transparent 0%, 
-      transparent 14%, 
-      rgba(17, 17, 17, 0.70) 26%, 
-      rgba(17, 17, 17, 0.96) 38%, 
-      #111111 50%, 
-      #111111 100%
-    );
+  background: linear-gradient(
+    90deg,
+    rgba(10, 11, 14, 0.0) 0%,
+    rgba(10, 11, 14, 0.0) 14%,
+    rgba(10, 11, 14, 0.35) 26%,
+    rgba(10, 11, 14, 0.75) 42%,
+    rgba(10, 11, 14, 0.90) 60%,
+    rgba(10, 11, 14, 0.95) 100%
+  );
 }
 
 .rsvp-container {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  /* Proportions match approved UI reference:
+   * Left margin clears the photorealistic marble pedestals
+   * Right margin leaves elegant breathing space on the right edge
+   */
+  padding-left: clamp(24px, 16vw, 240px);
+  padding-right: clamp(24px, 7vw, 100px);
+  box-sizing: border-box;
 }
 
 .rsvp-grid {
   display: grid;
-  grid-template-columns: minmax(350px, 450px) minmax(420px, 490px);
-  gap: clamp(36px, 5vw, 84px);
-  align-items: center;
-  justify-content: flex-end;
-  padding-left: clamp(80px, 12vw, 190px);
+  grid-template-columns: minmax(300px, 460px) minmax(360px, 480px);
+  justify-content: space-between;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: flex-start;
 }
 
 /* Left Column: Context & Privacy */
 .rsvp-info {
-  max-width: 450px;
-  padding-left: 0;
+  max-width: 480px;
+  padding-top: 6px;
 }
 
-.rsvp__label {
-  margin-bottom: 18px;
+.rsvp__badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 
-.rsvp__label-accent {
-  color: var(--c-accent);
-  font-weight: 500;
-  letter-spacing: var(--ls-label);
-  font-size: var(--fs-label);
+.rsvp__badge-line {
+  width: 38px;
+  height: 1.5px;
+  background-color: #ef4444;
+  display: inline-block;
+}
+
+.rsvp__badge-text {
+  color: #ef4444;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
 .rsvp__heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 3.4vw, 3.5rem);
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 1.14;
   margin-bottom: 18px;
-  color: var(--c-white);
-  font-size: var(--fs-h2);
-  line-height: 1.08;
+  letter-spacing: -0.01em;
 }
 
 .rsvp__intro {
-  color: #d1d5d8;
-  margin-bottom: 0;
-  line-height: 1.75;
-  font-size: var(--fs-lead);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.68;
+  color: #c4c8cc;
+  margin-bottom: 28px;
 }
 
-/* Hairline divider between intro and privacy */
-.rsvp-info__divider {
+.rsvp__divider {
   width: 100%;
   height: 1px;
   background: rgba(255, 255, 255, 0.12);
-  margin-block: clamp(20px, 2.5vw, 30px);
-}
-
-.rsvp-privacy {
-  padding-top: 0;
-  border-top: none;
+  margin-bottom: 28px;
 }
 
 .rsvp-privacy__title {
   font-family: var(--font-body);
-  font-size: var(--fs-label);
-  letter-spacing: var(--ls-label);
+  font-size: 11px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #b0b4b8;
+  color: #8a929b;
+  font-weight: 600;
   margin-bottom: 12px;
-  font-weight: 500;
 }
 
 .rsvp-privacy__text {
-  font-size: 0.8125rem;
-  line-height: 1.65;
-  color: #a0a5aa;
-  margin-bottom: 16px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.66;
+  color: #8a929b;
+  margin-bottom: 22px;
 }
 
 .rsvp-privacy__link {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: var(--c-white);
-  font-size: 0.8125rem;
-  text-transform: none;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: #ffffff;
   text-decoration: none;
-  transition: color var(--dur) var(--ease);
-}
-
-.rsvp-privacy__link svg {
-  width: 15px;
-  height: 10px;
-  transition: transform var(--dur) var(--ease);
+  font-weight: 500;
+  transition: opacity 0.2s;
 }
 
 .rsvp-privacy__link:hover {
-  color: #ffffff;
+  opacity: 0.8;
 }
 
-.rsvp-privacy__link:hover svg {
+.rsvp-privacy__arrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.rsvp-privacy__link:hover .rsvp-privacy__arrow {
   transform: translateX(4px);
 }
 
-/* Right Column: Seamless Form matching approved reference (no card border/box) */
+/* Right Column: Form Card */
 .rsvp-form-card {
-  background: transparent;
-  border: none;
-  padding: 0;
-  box-shadow: none;
+  width: 100%;
   max-width: 500px;
 }
 
@@ -163,215 +190,310 @@
   gap: 18px;
 }
 
-.rsvp-error-banner {
-  padding: 14px 18px;
-  background: rgba(239, 107, 107, 0.12);
-  border: 1px solid var(--c-accent);
-  color: #ffbaba;
-  font-size: 0.84rem;
-  line-height: 1.5;
-}
-
-/* Form Groups */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
 .form-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #d0d4d8;
-  font-weight: 500;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
 }
 
 .form-req {
-  color: var(--c-accent);
-  margin-left: 2px;
+  color: #ef4444;
+  margin-left: 6px;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .form-opt {
-  color: #717578;
+  color: #64748b;
   text-transform: lowercase;
-  font-size: 0.7rem;
-  margin-left: 4px;
-  font-weight: normal;
+  font-size: 11px;
+  font-weight: 400;
+  margin-left: 6px;
+  letter-spacing: normal;
+}
+
+/* Date Selection Options (The Two Options) */
+.date-options-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.date-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(22, 24, 28, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  padding: 12px 14px;
+  cursor: pointer;
+  color: #c4c8cc;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.date-option-btn:hover:not(:disabled) {
+  background: rgba(30, 34, 40, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.date-option-btn--active {
+  background: rgba(36, 40, 48, 0.95);
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.date-option-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.date-option-btn--active .date-option-dot {
+  border-color: #ffffff;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 3px #16181c;
+}
+
+.date-option-title {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .form-input,
 .form-select {
   width: 100%;
-  min-height: 48px;
-  padding: 11px 16px;
-  background: #16171a;
-  border: 1px solid #2a2c30;
-  border-radius: 0;
-  color: var(--c-white);
+  box-sizing: border-box;
+  background: rgba(22, 24, 28, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 13px 18px;
+  font-size: 14px;
+  color: #ffffff;
+  outline: none;
   font-family: var(--font-body);
-  font-size: 0.9375rem;
-  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .form-input::placeholder {
-  color: #60646a;
+  color: #555e6c;
 }
 
 .form-input:focus,
 .form-select:focus {
-  outline: none;
-  border-color: #ffffff;
-  background: #1c1d20;
+  border-color: rgba(255, 255, 255, 0.38);
+  background: rgba(28, 32, 38, 0.92);
 }
 
 .form-input--error {
-  border-color: var(--c-accent) !important;
+  border-color: #ef4444 !important;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 11.5px;
+  margin-top: 5px;
+  margin-bottom: 0;
 }
 
 .form-select-wrapper {
   position: relative;
-}
-
-.form-select-wrapper::after {
-  content: '';
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  width: 7px;
-  height: 7px;
-  border-right: 1.5px solid #a0a4a8;
-  border-bottom: 1.5px solid #a0a4a8;
-  transform: translateY(-65%) rotate(45deg);
-  pointer-events: none;
+  width: 100%;
 }
 
 .form-select {
   appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
-  padding-right: 40px;
-  color: #ffffff;
+  padding-right: 44px;
 }
 
 .form-select option {
-  background: #16171a;
-  color: var(--c-white);
+  background-color: #16181c;
+  color: #ffffff;
 }
 
-.form-error {
-  font-size: 0.78rem;
-  color: var(--c-accent);
-  margin-top: 3px;
+.form-select-chevron {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
 }
 
-.rsvp-form__submit-row {
-  margin-top: 8px;
+.form-submit-row {
+  margin-top: 4px;
 }
 
-.rsvp-form__submit {
+.rsvp-submit-btn {
   width: 100%;
-  min-height: 48px;
-  background: #FAF5EF;
-  color: var(--c-ink);
-  font-weight: 600;
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  border: none;
-  cursor: pointer;
-  transition: background-color var(--dur) var(--ease), transform var(--dur) var(--ease);
-}
-
-.rsvp-form__submit:hover:not(:disabled) {
   background: #ffffff;
-  transform: translateY(-1px);
+  color: #0b0c0e;
+  border: none;
+  border-radius: 2px;
+  padding: 16px 24px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  transition: background-color 0.2s, transform 0.15s;
 }
 
-/* Status Screens */
+.rsvp-submit-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.rsvp-submit-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.rsvp-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-arrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.rsvp-submit-btn:hover:not(:disabled) .submit-arrow {
+  transform: translateX(4px);
+}
+
+/* Status Cards */
 .rsvp-status {
-  padding: 36px 20px;
+  padding: 32px 24px;
+  background: rgba(26, 29, 34, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+.rsvp-status--success {
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
 }
 
 .rsvp-status__icon {
-  width: 54px;
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--c-success);
-  color: var(--c-success);
-  font-size: 1.5rem;
-  margin-bottom: 6px;
+  font-size: 28px;
+  color: #10b981;
+  margin-bottom: 16px;
 }
 
 .rsvp-status__title {
-  color: var(--c-white);
-  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+  color: #ffffff;
+  margin-bottom: 12px;
 }
 
 .rsvp-status__body {
-  color: var(--c-grey-light);
-  font-size: var(--fs-lead);
-  max-width: 420px;
-  line-height: 1.65;
+  color: #cbd5e1;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
-.rsvp-status__closing {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.2rem;
-  color: var(--c-white);
-  margin-top: 6px;
+.rsvp-status__detail-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.rsvp-status__detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.rsvp-status__detail-label {
+  color: #94a3b8;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.rsvp-status__detail-value {
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .rsvp-status__btn {
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
-@media (max-width: 991px) {
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .rsvp-backdrop__img {
+    left: 0;
+    width: 100%;
+    object-position: center top;
+    opacity: 0.28;
+  }
+
+  .rsvp-container {
+    padding-left: clamp(20px, 5vw, 36px);
+    padding-right: clamp(20px, 5vw, 36px);
+  }
+
   .rsvp-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
-    padding-left: 0;
-    justify-content: stretch;
+    gap: 40px;
   }
 
   .rsvp-info {
     max-width: 100%;
-    padding-left: 0;
   }
 
-  .rsvp-backdrop__img {
-    opacity: 0.22;
-    object-position: left top;
+  .rsvp-form-card {
+    max-width: 100%;
   }
 
   .rsvp-backdrop__overlay {
-    background: linear-gradient(180deg, 
-      rgba(17, 17, 17, 0.72) 0%, 
-      rgba(17, 17, 17, 0.94) 30%, 
-      #111111 55%, 
-      #111111 100%
+    background: linear-gradient(
+      180deg,
+      rgba(10, 11, 14, 0.45) 0%,
+      rgba(10, 11, 14, 0.82) 30%,
+      rgba(10, 11, 14, 0.96) 100%
     );
   }
 }
 
-@media (max-width: 767px) {
-  .rsvp-section {
-    padding-block: 56px;
-    min-height: auto;
-  }
-
-  .form-input,
-  .form-select {
-    font-size: 16px; /* Prevents iOS auto-zoom on mobile inputs */
+@media (max-width: 600px) {
+  .date-options-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }

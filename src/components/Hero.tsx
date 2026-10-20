@@ -1,52 +1,30 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { content } from '../config/content';
 import { eventConfig } from '../config/event';
 import { slideshowConfig, type SlideItem } from '../config/slideshow';
 import { Arrow } from './ui';
 import './Hero.css';
 
-/**
- * Preloads and decodes an image source before starting crossfade.
- * Prevents unrendered white/black/empty frames during transition.
- */
-function preloadImage(src: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = src;
-    if (typeof img.decode === 'function') {
-      img
-        .decode()
-        .then(() => resolve(true))
-        .catch(() => {
-          resolve(true);
-        });
-    } else {
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-    }
-  });
+const MOBILE_QUERY = '(max-width: 767px)';
+
+/** Resolve the variant the <picture> element will actually use, so we preload only that one. */
+function variantSrc(slide: SlideItem): string {
+  return window.matchMedia(MOBILE_QUERY).matches ? slide.mobile : slide.desktop;
 }
 
-function getSlideSrc(slide: SlideItem): string {
-  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches) {
-    return slide.mobile;
-  }
-  return slide.desktop;
-}
-
-/**
- * Renders an individual slide's picture element preserving identical responsive rules.
- */
-function SlidePicture({ slide }: { slide: SlideItem }) {
+function SlidePicture({ slide, priority = false }: { slide: SlideItem; priority?: boolean }) {
   return (
     <picture className="hero__media">
-      <source media="(max-width: 767px)" srcSet={slide.mobile} type="image/webp" />
+      <source media={MOBILE_QUERY} srcSet={slide.mobile} type="image/webp" />
       <source media="(min-width: 768px)" srcSet={slide.desktop} type="image/webp" />
       <img
         src={slide.desktop}
-        alt={slide.alt}
-        decoding="async"
+        alt=""
         className="hero__img"
+        loading="eager"
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'low'}
+        draggable={false}
         style={
           {
             '--obj-pos-desktop': slide.objectPositionDesktop || 'center center',
@@ -58,119 +36,101 @@ function SlidePicture({ slide }: { slide: SlideItem }) {
   );
 }
 
-/**
- * Two-layer crossfade slideshow:
- * - Base layer: always visible underneath (z-index: 1, opacity: 1), never drops to black.
- * - Incoming layer: smoothly dissolves on top (z-index: 2, opacity 0 -> 1 over 1.8s ease-in-out).
- * - Preloads and decodes next image before initiating transition.
- * - Continuous automatic loop across all slides.
- */
 function HeroSlideshow({ slides }: { slides: SlideItem[] }) {
-  if (slides.length === 0) return null;
+  const count = slides.length;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState<number | null>(null);
 
-  const getSlideAt = (idx: number): SlideItem => {
-    const safeIdx = ((idx % slides.length) + slides.length) % slides.length;
-    return slides[safeIdx] as SlideItem;
-  };
-
-  const [baseSlide, setBaseSlide] = useState<SlideItem>(() => getSlideAt(0));
-  const [incomingSlide, setIncomingSlide] = useState<SlideItem | null>(null);
-  const [isFadingIn, setIsFadingIn] = useState(false);
-
-  const currentIndexRef = useRef(0);
-  const isTransitioningRef = useRef(false);
-  const timerRef = useRef<number | null>(null);
+  // Preload and decode all images into browser memory immediately on mount
+  useEffect(() => {
+    slides.forEach((slide) => {
+      const img = new Image();
+      img.src = variantSrc(slide);
+      if (typeof img.decode === 'function') {
+        img.decode().catch(() => {});
+      }
+    });
+  }, [slides]);
 
   useEffect(() => {
-    let isMounted = true;
+    if (count < 2) return;
 
-    // Preload next slide immediately on initial mount
-    const nextIdx = (currentIndexRef.current + 1) % slides.length;
-    preloadImage(getSlideSrc(getSlideAt(nextIdx)));
+    let cancelled = false;
+    let mainTimer: number | undefined;
+    let cleanPrevTimer: number | undefined;
 
-    const scheduleNext = () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = window.setTimeout(async () => {
-        if (!isMounted || document.hidden || isTransitioningRef.current) {
-          scheduleNext();
-          return;
-        }
+    const advance = () => {
+      if (cancelled) return;
+      if (document.hidden) {
+        scheduleNext(slideshowConfig.slideDuration);
+        return;
+      }
 
-        const targetIdx = (currentIndexRef.current + 1) % slides.length;
-        const targetSlide = getSlideAt(targetIdx);
+      setActiveIndex((current) => {
+        const next = (current + 1) % count;
+        setPrevIndex(current);
 
-        // Preload and decode target image before initiating transition
-        await preloadImage(getSlideSrc(targetSlide));
-        if (!isMounted) return;
+        // After the crossfade duration (1800ms), clear prevIndex smoothly without any DOM unmount
+        window.clearTimeout(cleanPrevTimer);
+        cleanPrevTimer = window.setTimeout(() => {
+          if (!cancelled) {
+            setPrevIndex(null);
+          }
+        }, slideshowConfig.crossfadeDuration + 50);
 
-        isTransitioningRef.current = true;
-        setIncomingSlide(targetSlide);
-        setIsFadingIn(false);
+        return next;
+      });
 
-        // 50ms tick ensures browser renders layer at opacity: 0 before starting CSS transition
-        window.setTimeout(() => {
-          if (!isMounted) return;
-          setIsFadingIn(true);
-
-          // Complete transition after crossfadeDuration (1800ms)
-          window.setTimeout(() => {
-            if (!isMounted) return;
-            setBaseSlide(targetSlide);
-            setIncomingSlide(null);
-            setIsFadingIn(false);
-            currentIndexRef.current = targetIdx;
-            isTransitioningRef.current = false;
-
-            // Preload subsequent slide ahead of time
-            const upcomingIdx = (targetIdx + 1) % slides.length;
-            preloadImage(getSlideSrc(getSlideAt(upcomingIdx)));
-
-            scheduleNext();
-          }, slideshowConfig.crossfadeDuration);
-        }, 50);
-      }, slideshowConfig.slideDuration);
+      scheduleNext(slideshowConfig.slideDuration);
     };
 
-    scheduleNext();
+    const scheduleNext = (delay: number) => {
+      window.clearTimeout(mainTimer);
+      mainTimer = window.setTimeout(advance, delay);
+    };
 
-    const handleVisibility = () => {
-      if (!document.hidden && !isTransitioningRef.current) {
-        scheduleNext();
+    scheduleNext(slideshowConfig.slideDuration);
+
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        scheduleNext(slideshowConfig.slideDuration);
       }
     };
-
-    document.addEventListener('visibilitychange', handleVisibility);
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
-      isMounted = false;
-      if (timerRef.current) clearTimeout(timerRef.current);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      cancelled = true;
+      window.clearTimeout(mainTimer);
+      window.clearTimeout(cleanPrevTimer);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, [slides]);
+  }, [count]);
 
   return (
     <div className="hero__slides" aria-hidden="true">
-      {/* Base Layer: Always visible underneath, completely preventing any black/white flash */}
-      <div className="hero__layer hero__layer--base">
-        <SlidePicture slide={baseSlide} />
-      </div>
-
-      {/* Incoming Layer: Fades in on top over 1.8s with ease-in-out */}
-      {incomingSlide && (
-        <div className={`hero__layer hero__layer--incoming ${isFadingIn ? 'is-fading-in' : ''}`}>
-          <SlidePicture slide={incomingSlide} />
-        </div>
-      )}
+      {slides.map((slide, index) => {
+        const isActive = index === activeIndex;
+        const isPrev = index === prevIndex;
+        return (
+          <div
+            key={slide.id}
+            className={`hero__slide-layer ${isActive ? 'is-active' : ''} ${isPrev ? 'is-prev' : ''}`}
+          >
+            <SlidePicture slide={slide} priority={index === 0} />
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 export function Hero({ registrationOpen }: { registrationOpen: boolean }) {
-  const activeSlides = slideshowConfig.slides.filter((s) => s.active);
+  // Stable reference so the slideshow effect is not restarted on parent re-renders.
+  const [activeSlides] = useState(() => slideshowConfig.slides.filter((s) => s.active));
 
   return (
     <section className="hero" id="top" aria-label="Landing page showcase">
-      {/* Isolated background crossfade layers */}
+      {/* Background photography: opacity crossfade only */}
       <HeroSlideshow slides={activeSlides} />
 
       {/* Atmospheric subtle text-side gradient overlay */}

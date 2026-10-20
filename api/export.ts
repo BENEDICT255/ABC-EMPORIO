@@ -38,7 +38,7 @@ export default async function handler(req: ExtendedRequest, res: ExtendedRespons
     if (dbUrl) {
       const sql = neon(dbUrl);
       const rows = await sql`
-        SELECT id, full_name, profession, profession_other, company, phone, email, event_key, created_at
+        SELECT id, full_name, attendance_date, profession, profession_other, company, phone, email, event_key, created_at
         FROM registrations
         ORDER BY created_at DESC;
       `;
@@ -50,12 +50,13 @@ export default async function handler(req: ExtendedRequest, res: ExtendedRespons
     }
 
     if (format === 'csv') {
-      const header = 'ID,Full Name,Profession,Discipline,Company,Phone,Email,Created At\n';
+      const header = 'ID,Full Name,Attendance Date,Profession,Discipline,Company,Phone,Email,Created At\n';
       const rows = records.map((r) => {
         const clean = (val: unknown) => `"${String(val || '').replace(/"/g, '""')}"`;
         return [
           clean(r.id),
           clean(r.full_name || r.fullName),
+          clean(r.attendance_date || r.attendanceDate),
           clean(r.profession),
           clean(r.profession_other || r.professionOther),
           clean(r.company),
