@@ -5,7 +5,7 @@ import { brand } from './brand';
 
 export const links = {
   officialSite: brand.officialUrl,
-  officialSiteLabel: 'abcemporio.com',
+  officialSiteLabel: 'abctanzania.com',
   tanzaniaSite: brand.tanzaniaUrl,
   tanzaniaSiteLabel: 'abctanzania.com',
   instagramTanzania: brand.instagramTz,

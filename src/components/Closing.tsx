@@ -83,12 +83,12 @@ export function Closing({ registrationOpen = true }: { registrationOpen?: boolea
             <ul className="footer__links-list">
               <li>
                 <a
-                  href="https://abcemporio.com/"
+                  href="https://abctanzania.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer__link"
                 >
-                  Official website: abcemporio.com
+                  Official website: abctanzania.com
                 </a>
               </li>
               <li>

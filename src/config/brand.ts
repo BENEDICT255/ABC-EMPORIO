@@ -17,8 +17,8 @@ export interface ResponsiveImage {
 export const brand = {
   name: 'ABC Emporio',
   slogan: 'The Originals. The Best. The Latest.',
-  officialUrl: 'https://abcemporio.com/',
-  officialUrlLabel: 'abcemporio.com',
+  officialUrl: 'https://abctanzania.com/',
+  officialUrlLabel: 'abctanzania.com',
   tanzaniaUrl: 'https://abctanzania.com/',
   tanzaniaUrlLabel: 'abctanzania.com',
   instagramTz: 'https://www.instagram.com/abcceramics_tanzania/',

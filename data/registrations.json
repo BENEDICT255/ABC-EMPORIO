@@ -54,5 +54,21 @@
     "reminder_1day_sent": false,
     "reminder_dayof_sent": false,
     "createdAt": "2026-10-19T20:02:18.853Z"
+  },
+  {
+    "id": "reg_1792496472635_deq82z",
+    "fullName": "Levina Bisama",
+    "attendanceDate": "Monday, 2 November 2026",
+    "profession": "Architect",
+    "professionOther": "",
+    "company": "ABC",
+    "phone": "074368957",
+    "email": "benedictbisama@gmail.com",
+    "submissionId": "04ad655d-b213-4e36-a8d4-ed9224275206",
+    "confirmation_sent": true,
+    "reminder_3days_sent": false,
+    "reminder_1day_sent": false,
+    "reminder_dayof_sent": false,
+    "createdAt": "2026-10-20T11:41:12.635Z"
   }
 ]
