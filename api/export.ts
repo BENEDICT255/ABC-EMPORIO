@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { neon } from '@neondatabase/serverless';
 import fs from 'node:fs';
 import path from 'node:path';
-import { getSupabase } from './supabase';
+import { getSupabase } from './supabase.js';
 
 interface ExtendedRequest extends IncomingMessage {
   query?: Record<string, string>;

@@ -7,8 +7,8 @@ import {
   buildReminder1DayEmail,
   buildReminderDayOfEmail,
   sendEmail,
-} from './email';
-import { getSupabase } from './supabase';
+} from './email.js';
+import { getSupabase } from './supabase.js';
 
 interface RegistrationRecord {
   id: string;

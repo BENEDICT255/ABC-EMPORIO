@@ -2,8 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildConfirmationEmail, sendEmail } from './email';
-import { getSupabase } from './supabase';
+import { buildConfirmationEmail, sendEmail } from './email.js';
+import { getSupabase } from './supabase.js';
 
 interface RsvpPayload {
   fullName: string;
