@@ -99,7 +99,7 @@ export const eventConfig: EventConfig = {
     'https://www.google.com/maps/search/?api=1&query=ABC+EMPORIO+-+Dar+Es+Salaam,+Next+to+vodacom+head+office,+Bagamoyo+Rd,+Dar+es+Salaam',
 
   organiserName: 'ABC Emporio',
-  organiserContact: { phone: '+255 791 261 881', email: 'info@abctanzania.com' },
+  organiserContact: { phone: '+255 685 289 679', email: 'info@abctanzania.com' },
 
   registrationOpen: true,
   registrationDeadline: null,

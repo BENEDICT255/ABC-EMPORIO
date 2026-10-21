@@ -68,7 +68,7 @@ export function getCalendarEventDetails(attendanceDate: string): CalendarEventDe
     'Hours: 10:00 AM – 5:00 PM',
     'Venue: ABC Emporio Showroom',
     'Address: Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam',
-    'Concierge Desk: +255 791 261 881 / info@abctanzania.com',
+    'Concierge Desk: +255 685 289 679 / info@abctanzania.com',
     'Google Maps: https://www.google.com/maps/search/?api=1&query=ABC+EMPORIO+-+Dar+Es+Salaam,+Next+to+vodacom+head+office,+Bagamoyo+Rd,+Dar+es+Salaam',
     'Website: https://showandtell.abcemporio.com'
   ].join('\n');

@@ -86,7 +86,7 @@ export function validateRsvp(input: RsvpInput): FieldErrors {
   if (!phone) {
     errors.phone = 'Please enter your phone or WhatsApp number.';
   } else if (!PHONE_CHARS_RE.test(phone)) {
-    errors.phone = 'Please include your country code, starting with + (for example +255 791 261 881).';
+    errors.phone = 'Please include your country code, starting with + (for example +255 685 289 679).';
   } else if (digits.length < 8 || digits.length > 16) {
     errors.phone = 'Please check the number — it should include the country code and be 8–15 digits long.';
   }

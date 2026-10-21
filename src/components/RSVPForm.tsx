@@ -364,7 +364,7 @@ export function RSVPForm() {
                     aria-invalid={Boolean(errors.phone)}
                     aria-describedby={errors.phone ? 'phone-error' : undefined}
                     className={`form-input ${errors.phone ? 'form-input--error' : ''}`}
-                    placeholder="+255 791 261 881"
+                    placeholder="+255 685 289 679"
                     value={input.phone}
                     onChange={handleChange}
                     disabled={status === 'submitting'}

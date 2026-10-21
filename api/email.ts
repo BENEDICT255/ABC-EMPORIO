@@ -29,7 +29,7 @@ const VENUE_NAME = 'ABC Emporio — Dar es Salaam Showroom';
 const VENUE_ADDRESS = 'Next to Vodacom Head Office, Bagamoyo Rd, Dar es Salaam';
 const VENUE_MAPS_URL =
   'https://www.google.com/maps/search/?api=1&query=ABC+EMPORIO+-+Dar+Es+Salaam,+Next+to+vodacom+head+office,+Bagamoyo+Rd,+Dar+es+Salaam';
-const CONCIERGE_PHONE = '+255 791 261 881';
+const CONCIERGE_PHONE = '+255 685 289 679';
 const CONCIERGE_EMAIL = 'info@abctanzania.com';
 
 function getEmailBaseStyles(): string {
@@ -138,7 +138,7 @@ export function buildConfirmationEmail(recipient: EmailRecipient): { subject: st
   const titleParam = encodeURIComponent('ABC Emporio — The Show & Tell Experience');
   const locationParam = encodeURIComponent('ABC Emporio Showroom, Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam, Tanzania');
   const detailsParam = encodeURIComponent(
-    `The Show & Tell Experience at ABC Emporio.\n\nDate: ${recipient.attendanceDate}\nHours: 10:00 AM – 5:00 PM\nVenue: ABC Emporio Showroom\nConcierge: +255 791 261 881\nWebsite: https://showandtell.abcemporio.com`
+    `The Show & Tell Experience at ABC Emporio.\n\nDate: ${recipient.attendanceDate}\nHours: 10:00 AM – 5:00 PM\nVenue: ABC Emporio Showroom\nConcierge: +255 685 289 679\nWebsite: https://showandtell.abcemporio.com`
   );
   const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titleParam}&dates=${startIso}/${endIso}&details=${detailsParam}&location=${locationParam}`;
 
