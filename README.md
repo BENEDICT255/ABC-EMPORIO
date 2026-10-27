@@ -2,7 +2,7 @@
 
 A bespoke, mobile-first event invitation and RSVP website engineered for **ABC Emporio**'s exclusive Show & Tell Experience for architects, designers, and engineers at their Dar es Salaam showroom.
 
-Designed and developed to match the luxury aesthetic, typography, and architectural brand standards of [https://abcemporio.com/](https://abcemporio.com/).
+Main ABC Emporio Website [https://abcemporio.com/](https://abcemporio.com/).
 
 ---
 
