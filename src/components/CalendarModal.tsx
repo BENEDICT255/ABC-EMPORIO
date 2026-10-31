@@ -139,7 +139,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
                 Add to Your Calendar?
               </h3>
               <p className="cal-mini-time">
-                {event.dateFormatted} &bull; 10:00 AM – 5:00 PM
+                {event.dateFormatted} &bull; From 1:00 PM
               </p>
               <p className="cal-mini-venue">
                 ABC Emporio Showroom, Bagamoyo Rd

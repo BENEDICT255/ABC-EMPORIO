@@ -11,8 +11,8 @@ export const PROFESSIONS = ['Architect', 'Interior Designer', 'Builder / Develop
 export type Profession = (typeof PROFESSIONS)[number] | 'Architects' | 'Engineers' | 'Others';
 
 export const ATTENDANCE_DATES = [
-  'Monday, 2 November 2026',
-  'Tuesday, 3 November 2026',
+  'Wednesday, 18 November 2026',
+  'Thursday, 19 November 2026',
 ] as const;
 export type AttendanceDate = (typeof ATTENDANCE_DATES)[number];
 

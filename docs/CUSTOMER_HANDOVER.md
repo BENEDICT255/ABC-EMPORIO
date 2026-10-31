@@ -18,7 +18,7 @@ We are delighted to present the completed production build of **The Show & Tell 
 
 2. **Screen 2 — You're Invited (Event Details):**
    * Luxurious warm ivory aesthetic with subtle architectural material textures.
-   * **WHEN:** Monday, 2 November 2026 *(Showroom closes 5:30 pm)*.
+   * **WHEN:** 18 & 19 November 2026 (Wednesday & Thursday, from 1:00 pm; showroom closes 5:30 pm).
    * **WHERE:** ABC Emporio — Dar es Salaam *(Next to Vodacom Head Office, Bagamoyo Rd)*.
    * **ACTION:** Direct **"NAVIGATE ON GOOGLE MAPS →"** link opening the showroom entrance.
    * **HOST:** ABC EMPORIO.
@@ -70,6 +70,6 @@ The website includes optimized WhatsApp social preview tags. When sharing the li
 
 | Item | Current Status | Notes for Organiser |
 | :--- | :--- | :--- |
-| **Event Start Time** | Marked as *Time to be confirmed* | When the exact evening or morning start hour is decided (e.g. 6:00 pm), it can be updated in `src/config/event.ts`. |
-| **Event Date** | Monday, 2 November 2026 | Confirmed in approved design; ready to publish. |
+| **Event Start Time** | From 1:00 pm | Confirmed (`13:00` – `17:30` EAT in `src/config/event.ts`). |
+| **Event Date** | 18 & 19 November 2026 (Wednesday & Thursday) | Confirmed in approved design; ready to publish. |
 | **Vercel Production Domain** | Vercel URL / Custom Domain | Deploy to your official Vercel account or attach your custom subdomain (e.g. `showandtell.abcemporio.com`). |

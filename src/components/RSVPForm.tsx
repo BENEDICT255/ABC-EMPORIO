@@ -19,7 +19,7 @@ import './RSVPForm.css';
 
 const initialInput: RsvpInput = {
   fullName: '',
-  attendanceDate: 'Monday, 2 November 2026',
+  attendanceDate: 'Wednesday, 18 November 2026',
   profession: '',
   professionOther: '',
   company: '',
@@ -218,30 +218,30 @@ export function RSVPForm() {
                     <button
                       type="button"
                       role="radio"
-                      aria-checked={input.attendanceDate === 'Monday, 2 November 2026'}
-                      className={`date-option-btn ${input.attendanceDate === 'Monday, 2 November 2026' ? 'date-option-btn--active' : ''}`}
+                      aria-checked={input.attendanceDate === 'Wednesday, 18 November 2026'}
+                      className={`date-option-btn ${input.attendanceDate === 'Wednesday, 18 November 2026' ? 'date-option-btn--active' : ''}`}
                       onClick={() => {
-                        setInput((prev) => ({ ...prev, attendanceDate: 'Monday, 2 November 2026' }));
+                        setInput((prev) => ({ ...prev, attendanceDate: 'Wednesday, 18 November 2026' }));
                         if (errors.attendanceDate) setErrors((prev) => ({ ...prev, attendanceDate: undefined }));
                       }}
                       disabled={status === 'submitting'}
                     >
                       <span className="date-option-dot" aria-hidden="true" />
-                      <span className="date-option-title">Monday, 2 November 2026</span>
+                      <span className="date-option-title">Wednesday, 18 November 2026</span>
                     </button>
                     <button
                       type="button"
                       role="radio"
-                      aria-checked={input.attendanceDate === 'Tuesday, 3 November 2026'}
-                      className={`date-option-btn ${input.attendanceDate === 'Tuesday, 3 November 2026' ? 'date-option-btn--active' : ''}`}
+                      aria-checked={input.attendanceDate === 'Thursday, 19 November 2026'}
+                      className={`date-option-btn ${input.attendanceDate === 'Thursday, 19 November 2026' ? 'date-option-btn--active' : ''}`}
                       onClick={() => {
-                        setInput((prev) => ({ ...prev, attendanceDate: 'Tuesday, 3 November 2026' }));
+                        setInput((prev) => ({ ...prev, attendanceDate: 'Thursday, 19 November 2026' }));
                         if (errors.attendanceDate) setErrors((prev) => ({ ...prev, attendanceDate: undefined }));
                       }}
                       disabled={status === 'submitting'}
                     >
                       <span className="date-option-dot" aria-hidden="true" />
-                      <span className="date-option-title">Tuesday, 3 November 2026</span>
+                      <span className="date-option-title">Thursday, 19 November 2026</span>
                     </button>
                   </div>
                   {errors.attendanceDate && (

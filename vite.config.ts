@@ -91,7 +91,7 @@ function localApiMiddleware(): Plugin {
               const filePath = path.join(dataDir, 'registrations.json');
               const current = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
 
-              const attendanceDate = body.attendanceDate || body.attendance_date || 'Monday, 2 November 2026';
+              const attendanceDate = body.attendanceDate || body.attendance_date || 'Wednesday, 18 November 2026';
               const record = {
                 id: `reg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
                 fullName: body.fullName || '',

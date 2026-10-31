@@ -64,8 +64,9 @@ export function getSchedule(cfg: EventConfig): Schedule | null {
   const start = zonedTimeToUtc(cfg.eventDate, cfg.startTime, cfg.timeZone);
   if (!start) return null;
   let end: Date | null = null;
+  const endDate = cfg.eventEndDate || cfg.eventDate;
   if (cfg.endTime) {
-    end = zonedTimeToUtc(cfg.eventDate, cfg.endTime, cfg.timeZone);
+    end = zonedTimeToUtc(endDate, cfg.endTime, cfg.timeZone);
     // An end time earlier than the start is treated as finishing after midnight.
     if (end && end <= start) end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
   }

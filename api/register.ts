@@ -56,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 2. Input validation
     const fullName = (body.fullName || '').trim();
-    const attendanceDate = (body.attendanceDate || body.attendance_date || 'Monday, 2 November 2026').trim();
+    const attendanceDate = (body.attendanceDate || body.attendance_date || 'Wednesday, 18 November 2026').trim();
     const profession = (body.profession || '').trim();
     const professionOther = (body.professionOther || '').trim();
     const company = (body.company || '').trim();

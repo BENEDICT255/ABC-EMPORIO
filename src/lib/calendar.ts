@@ -1,6 +1,6 @@
 /**
  * Calendar Reminder Utilities for ABC Emporio — The Show & Tell Experience
- * Event Hours: 10:00 AM – 5:00 PM EAT (UTC+3)
+ * Event Hours: From 1:00 PM – 5:30 PM EAT (UTC+3)
  */
 
 export interface CalendarEventDetails {
@@ -47,17 +47,17 @@ export function detectUserPlatform(): PlatformType {
 }
 
 export function getCalendarEventDetails(attendanceDate: string): CalendarEventDetails {
-  const isDay2 = attendanceDate.includes('3 November') || attendanceDate.includes('Tuesday');
+  const isDay2 = attendanceDate.includes('19 November') || attendanceDate.includes('Thursday');
   
-  // 10:00 AM EAT is 07:00 UTC | 5:00 PM EAT is 14:00 UTC
-  const startDateIso = isDay2 ? '20261103T070000Z' : '20261102T070000Z';
-  const endDateIso = isDay2 ? '20261103T140000Z' : '20261102T140000Z';
+  // 1:00 PM EAT is 10:00 UTC | 5:30 PM EAT is 14:30 UTC
+  const startDateIso = isDay2 ? '20261119T100000Z' : '20261118T100000Z';
+  const endDateIso = isDay2 ? '20261119T143000Z' : '20261118T143000Z';
 
   // Outlook format: YYYY-MM-DDTHH:mm:ss+03:00
-  const startIsoOutlook = isDay2 ? '2026-11-03T10:00:00+03:00' : '2026-11-02T10:00:00+03:00';
-  const endIsoOutlook = isDay2 ? '2026-11-03T17:00:00+03:00' : '2026-11-02T17:00:00+03:00';
+  const startIsoOutlook = isDay2 ? '2026-11-19T13:00:00+03:00' : '2026-11-18T13:00:00+03:00';
+  const endIsoOutlook = isDay2 ? '2026-11-19T17:30:00+03:00' : '2026-11-18T17:30:00+03:00';
 
-  const dateFormatted = isDay2 ? 'Tuesday, 3 November 2026' : 'Monday, 2 November 2026';
+  const dateFormatted = isDay2 ? 'Thursday, 19 November 2026' : 'Wednesday, 18 November 2026';
 
   const title = 'ABC Emporio — The Show & Tell Experience';
   const location = 'ABC Emporio Showroom, Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam, Tanzania';
@@ -65,7 +65,7 @@ export function getCalendarEventDetails(attendanceDate: string): CalendarEventDe
     'You are registered for The Show & Tell Experience at ABC Emporio.',
     '',
     `Date: ${dateFormatted}`,
-    'Hours: 10:00 AM – 5:00 PM',
+    'Time: From 1:00 PM (Showroom closes 5:30 PM)',
     'Venue: ABC Emporio Showroom',
     'Address: Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam',
     'Concierge Desk: +255 685 289 679 / info@abctanzania.com',
@@ -127,7 +127,7 @@ export function generateIcsContent(attendanceDate: string): string {
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
-    `UID:abc-showtell-${event.isDay2 ? '20261103' : '20261102'}-${Date.now()}@abcemporio.com`,
+    `UID:abc-showtell-${event.isDay2 ? '20261119' : '20261118'}-${Date.now()}@abcemporio.com`,
     `DTSTAMP:${now}`,
     `DTSTART:${event.startDateIso}`,
     `DTEND:${event.endDateIso}`,
@@ -155,7 +155,7 @@ export function downloadIcsFile(attendanceDate: string): void {
   const event = getCalendarEventDetails(attendanceDate);
   const ics = generateIcsContent(attendanceDate);
   const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-  const filename = event.isDay2 ? 'abc-emporio-showtell-3nov.ics' : 'abc-emporio-showtell-2nov.ics';
+  const filename = event.isDay2 ? 'abc-emporio-showtell-19nov.ics' : 'abc-emporio-showtell-18nov.ics';
 
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);

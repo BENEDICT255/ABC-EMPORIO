@@ -102,17 +102,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     for (const record of records) {
       const email = (record.email || '').trim();
       const name = record.fullName || record.full_name || 'Valued Guest';
-      const dateSelected = record.attendanceDate || record.attendance_date || 'Monday, 2 November 2026';
+      const dateSelected = record.attendanceDate || record.attendance_date || 'Wednesday, 18 November 2026';
 
       if (!email) continue;
       if (targetEmail && email.toLowerCase() !== targetEmail) continue;
 
       // Determine date targets:
-      // Day 1: 2026-11-02
-      // Day 2: 2026-11-03
-      let primaryDate = '2026-11-02';
-      if (dateSelected.includes('Tuesday') || dateSelected.includes('3 November')) {
-        primaryDate = '2026-11-03';
+      // Day 1: 2026-11-18
+      // Day 2: 2026-11-19
+      let primaryDate = '2026-11-18';
+      if (dateSelected.includes('Thursday') || dateSelected.includes('19 November')) {
+        primaryDate = '2026-11-19';
       }
 
       const daysUntil = getDaysUntil(primaryDate);

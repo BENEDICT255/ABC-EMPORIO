@@ -79,17 +79,17 @@ export const eventConfig: EventConfig = {
     'Join ABC Emporio for a closer look at the materials and details that bring exceptional spaces to life. Explore selected products, appreciate their textures and finishes, and discover possibilities for your next project.',
 
   // — Confirmed Event Details —
-  eventDate: '2026-11-02',
-  eventEndDate: '2026-11-03',
-  eventDates: ['2026-11-02', '2026-11-03'],
-  eventDatesDisplay: '2 & 3 November 2026 (Monday & Tuesday)',
+  eventDate: '2026-11-18',
+  eventEndDate: '2026-11-19',
+  eventDates: ['2026-11-18', '2026-11-19'],
+  eventDatesDisplay: '18 & 19 November 2026 (Wednesday & Thursday)',
   attendanceOptions: [
-    'Monday, 2 November 2026',
-    'Tuesday, 3 November 2026',
-    'Both Days (2 & 3 November 2026)',
+    'Wednesday, 18 November 2026',
+    'Thursday, 19 November 2026',
+    'Both Days (18 & 19 November 2026)',
   ],
-  startTime: null,
-  endTime: null,
+  startTime: '13:00',
+  endTime: '17:30',
   timeZone: 'Africa/Dar_es_Salaam',
 
   venueName: 'ABC Emporio — Dar es Salaam',

@@ -96,7 +96,7 @@ function wrapHtmlEmail(title: string, eyebrow: string, contentHtml: string): str
                     <p style="margin: 0 0 12px 0; font-size: 13px; color: #555555; line-height: 1.5;">
                       ${VENUE_ADDRESS}
                       <br>
-                      <em>Showroom closes at 5:30 pm</em>
+                      <em>From 1:00 pm &bull; Showroom closes at 5:30 pm</em>
                     </p>
                     <a href="${VENUE_MAPS_URL}" target="_blank" style="display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #111111; text-decoration: underline; text-transform: uppercase;">
                       Open in Google Maps &rarr;
@@ -132,13 +132,13 @@ function wrapHtmlEmail(title: string, eyebrow: string, contentHtml: string): str
 export function buildConfirmationEmail(recipient: EmailRecipient): { subject: string; html: string; text: string } {
   const subject = `Registration Confirmed: ABC Emporio Show & Tell Experience (${recipient.attendanceDate})`;
 
-  const isDay2 = recipient.attendanceDate.includes('3 November') || recipient.attendanceDate.includes('Tuesday');
-  const startIso = isDay2 ? '20261103T070000Z' : '20261102T070000Z';
-  const endIso = isDay2 ? '20261103T140000Z' : '20261102T140000Z';
+  const isDay2 = recipient.attendanceDate.includes('19 November') || recipient.attendanceDate.includes('Thursday');
+  const startIso = isDay2 ? '20261119T100000Z' : '20261118T100000Z';
+  const endIso = isDay2 ? '20261119T143000Z' : '20261118T143000Z';
   const titleParam = encodeURIComponent('ABC Emporio — The Show & Tell Experience');
   const locationParam = encodeURIComponent('ABC Emporio Showroom, Bagamoyo Rd (Next to Vodacom Head Office), Dar es Salaam, Tanzania');
   const detailsParam = encodeURIComponent(
-    `The Show & Tell Experience at ABC Emporio.\n\nDate: ${recipient.attendanceDate}\nHours: 10:00 AM – 5:00 PM\nVenue: ABC Emporio Showroom\nConcierge: +255 685 289 679\nWebsite: https://showandtell.abcemporio.com`
+    `The Show & Tell Experience at ABC Emporio.\n\nDate: ${recipient.attendanceDate}\nTime: From 1:00 PM\nVenue: ABC Emporio Showroom\nConcierge: +255 685 289 679\nWebsite: https://showandtell.abcemporio.com`
   );
   const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titleParam}&dates=${startIso}/${endIso}&details=${detailsParam}&location=${locationParam}`;
 
@@ -161,8 +161,8 @@ export function buildConfirmationEmail(recipient: EmailRecipient): { subject: st
         <td style="padding: 12px 0; font-size: 14px; font-weight: 700; color: #b89758; border-top: 1px solid #f0ede8;">${recipient.attendanceDate}</td>
       </tr>
       <tr>
-        <td style="padding: 12px 0; font-size: 13px; color: #777777; border-top: 1px solid #f0ede8;">HOURS</td>
-        <td style="padding: 12px 0; font-size: 14px; color: #111111; border-top: 1px solid #f0ede8;">10:00 AM – 5:00 PM EAT</td>
+        <td style="padding: 12px 0; font-size: 13px; color: #777777; border-top: 1px solid #f0ede8;">TIME</td>
+        <td style="padding: 12px 0; font-size: 14px; color: #111111; border-top: 1px solid #f0ede8;">From 1:00 PM EAT</td>
       </tr>
       ${recipient.phone ? `
       <tr>
@@ -174,7 +174,7 @@ export function buildConfirmationEmail(recipient: EmailRecipient): { subject: st
     <!-- 1-Click Add to Google Calendar Button -->
     <div style="margin: 28px 0 20px 0; text-align: center;">
       <a href="${googleCalUrl}" target="_blank" style="display: inline-block; background-color: #111111; color: #ffffff; border: 1px solid #b89758; padding: 13px 26px; text-decoration: none; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; border-radius: 3px;">
-        &#128197; Add to Google Calendar (10:00 AM – 5:00 PM)
+        &#128197; Add to Google Calendar (From 1:00 PM)
       </a>
     </div>
 
@@ -192,7 +192,7 @@ Dear ${recipient.name},
 Thank you for registering for The Show & Tell Experience at ABC Emporio. We are pleased to confirm your attendance.
 
 ATTENDANCE DATE: ${recipient.attendanceDate}
-HOURS: 10:00 am – 5:00 pm
+TIME: From 1:00 pm
 GUEST: ${recipient.name}
 VENUE: ${VENUE_NAME}
 ADDRESS: ${VENUE_ADDRESS}
@@ -268,7 +268,7 @@ export function buildReminder1DayEmail(recipient: EmailRecipient): { subject: st
     <div style="background-color: #fbf9f6; border-left: 3px solid #b89758; padding: 16px 20px; margin: 20px 0;">
       <p style="margin: 0 0 4px 0; font-size: 11px; letter-spacing: 1.5px; color: #8a6d3b; text-transform: uppercase; font-weight: 700;">YOUR ATTENDANCE DATE</p>
       <p style="margin: 0; font-size: 16px; font-weight: 700; color: #111111;">${recipient.attendanceDate}</p>
-      <p style="margin: 6px 0 0 0; font-size: 13px; color: #555555;">Showroom closes at 5:30 pm</p>
+      <p style="margin: 6px 0 0 0; font-size: 13px; color: #555555;">From 1:00 pm &bull; Showroom closes at 5:30 pm</p>
     </div>
     <p style="margin: 0 0 16px 0; font-size: 14px; color: #444444; line-height: 1.7;">
       The showroom is located on Bagamoyo Road, directly next to the Vodacom Head Office. Dedicated visitor parking is available at the front entrance.
@@ -314,7 +314,7 @@ export function buildReminderDayOfEmail(recipient: EmailRecipient): { subject: s
     <div style="background-color: #fbf9f6; border-left: 3px solid #b89758; padding: 16px 20px; margin: 20px 0;">
       <p style="margin: 0 0 4px 0; font-size: 11px; letter-spacing: 1.5px; color: #8a6d3b; text-transform: uppercase; font-weight: 700;">LOCATION</p>
       <p style="margin: 0; font-size: 15px; font-weight: 700; color: #111111;">${VENUE_ADDRESS}</p>
-      <p style="margin: 4px 0 0 0; font-size: 13px; color: #666666;">Showroom closes at 5:30 pm</p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #666666;">From 1:00 pm &bull; Showroom closes at 5:30 pm</p>
     </div>
     <p style="margin: 0 0 20px 0;">
       <a href="${VENUE_MAPS_URL}" target="_blank" style="display: inline-block; background-color: #111111; color: #ffffff; padding: 12px 24px; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">
@@ -332,7 +332,7 @@ Dear ${recipient.name},
 Today is the day! We look forward to welcoming you to The Show & Tell Experience at ABC Emporio.
 
 LOCATION: ${VENUE_ADDRESS}
-SHOWROOM HOURS: 10:00 am – 5:00 pm
+SHOWROOM HOURS: From 1:00 pm (Closes at 5:30 pm)
 MAPS: ${VENUE_MAPS_URL}
 CONCIERGE PHONE: ${CONCIERGE_PHONE}
   `.trim();

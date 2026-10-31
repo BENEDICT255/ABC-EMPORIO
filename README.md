@@ -104,8 +104,8 @@ npm run preview
 
 All core event variables are configured in `src/config/event.ts`:
 
-- `date`: `Monday, 2 November 2026`
-- `startTime`: Pending confirmation indicator (until organizer approves exact hour).
+- `date`: `18 & 19 November 2026 (Wednesday & Thursday)`
+- `startTime`: `13:00` (`From 1:00 pm`)
 - `venue`: `ABC Emporio — Dar es Salaam`, `Next to Vodacom Head Office, Bagamoyo Rd, Dar es Salaam`.
 - `googleMapsUrl`: Direct link to the Dar es Salaam showroom on Google Maps.
 - `phone`: `+255 685 289 679` (click-to-call: `tel:+255685289679`).
